@@ -1,0 +1,3 @@
+{"duration":30,"event":"start","gamecontroller_api":false,"subscription":"AE42 only","time":"2026-10-24T07:51:33Z"}
+{"authorization":3,"event":"bluetooth","state":5,"time":"2026-10-24T07:51:33Z"}
+{"all_six_press_release_observed":false,"event":"summary","final_buttons":null,"ios_background_verified":false,"isolated_pressed_mask":0,"isolated_released_mask":0,"overflows":0,"packets":0,"sequence_gaps":0,"time":"2026-10-24T07:52:04Z","unrecognized":0}

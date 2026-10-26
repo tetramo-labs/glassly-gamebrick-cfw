@@ -1,0 +1,38 @@
+[
+  {
+    "directory": "jl-misctools",
+    "url": "https://github.com/kagaimiq/jl-misctools.git",
+    "commit": "0a5b12db0ef38f3042acffbe2452730a37fd2405"
+  },
+  {
+    "directory": "jl-uboot-tool",
+    "url": "https://github.com/kagaimiq/jl-uboot-tool.git",
+    "commit": "adb3f18889e88ac512ce0a3c4d8cc3d3cb30696a"
+  },
+  {
+    "directory": "ghidra-jieli",
+    "url": "https://github.com/quarkslab/ghidra-jieli.git",
+    "commit": "e1bd0707874b77b759401555d24839ad43af1267"
+  },
+  {
+    "directory": "sdk",
+    "url": "https://github.com/Jieli-Tech/fw-AC63_BT_SDK.git",
+    "commit": "fdc018de81629e21e594d677cf05f87d288be0f0",
+    "sparse_paths": [
+      "apps/hid",
+      "cpu/bd19/tools",
+      "include_lib/btstack",
+      "include_lib/driver/cpu/bd19"
+    ]
+  },
+  {
+    "directory": "LiteEMF",
+    "url": "https://github.com/LiteEMF/LiteEMF.git",
+    "commit": "9abcfb35d50262d1652b1627efa624b00636323e"
+  },
+  {
+    "directory": "rea",
+    "url": "https://github.com/morluto/rea.git",
+    "commit": "e073f64be0a5a30c32d8b3cec23f9bd411080903"
+  }
+]

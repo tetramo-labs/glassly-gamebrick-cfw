@@ -1,0 +1,75 @@
+{
+  "status": "WITHDRAWN after 2026-10-25 boot failure; install blocked; see docs/boot-failure.md",
+  "stock_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+  "target_sha256": "b0c1bdf013ba35a0ad86fc1104412ab788da2bd294e47c0e644f6aaec8298ad8",
+  "app_sha256": "8b3cf5bff313e27c4da630bf8759df7217f8a8ed88bcbf83d18c280c09b43221",
+  "app_size": 199232,
+  "payload_size": 376,
+  "changed_sectors": [
+    8192,
+    24576,
+    28672,
+    53248,
+    69632,
+    204800,
+    208896
+  ],
+  "patches": [
+    {
+      "address": "0x1e0bcac",
+      "offset": "0xbb8c",
+      "before": "c0ff68eee001",
+      "after": "c0ffd009e301",
+      "purpose": "Create task through state-initializing entry",
+      "decoded": "mov r0, #0x1e309d0"
+    },
+    {
+      "address": "0x1e0bcb6",
+      "offset": "0xbb96",
+      "before": "03fb0008",
+      "after": "03fb4008",
+      "purpose": "Increase task stack request from 0x800 to 0x840; preserve headroom",
+      "decoded": "mov r3, #0x840"
+    },
+    {
+      "address": "0x1e0f194",
+      "offset": "0xf074",
+      "before": "bff33cee",
+      "after": "81f32a0c",
+      "purpose": "gb_task_tick",
+      "decoded": "call 0x1e309ec"
+    },
+    {
+      "address": "0x1e04b86",
+      "offset": "0x4a66",
+      "before": "80f3c57a",
+      "after": "81f3375f",
+      "purpose": "gb_ccc_changed",
+      "decoded": "call 0x1e309f8"
+    },
+    {
+      "address": "0x1e05274",
+      "offset": "0x5154",
+      "before": "cb175601",
+      "after": "c1f3bd5b",
+      "purpose": "gb_ble_tail",
+      "decoded": "goto 0x1e309f2"
+    },
+    {
+      "address": "0x1e00138",
+      "offset": "0x18",
+      "before": "c2fff8230000",
+      "after": "c2fffc230000",
+      "purpose": "Zero reserved epoch word at 0x40b8; stop before RAM code",
+      "decoded": "mov r2, #0x23fc"
+    }
+  ],
+  "state": {
+    "task_stack_extra": 40,
+    "task_stack_request_before": 2048,
+    "task_stack_request_after": 2112,
+    "epoch_address": "0x40b8",
+    "queue_capacity": 16
+  },
+  "preserved": "All bytes outside used active application area; config and P11 content retained, file headers/offsets updated"
+}

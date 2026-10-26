@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-25",
+  "installed_sha256": "bec28bd21195de6d5ef50a0fb163a5dd8d669aeba2aa38e79b8ca37a2cc2073b",
+  "user_observation": "White LED repeats three blinks, pause, indefinitely; reported no response to controls.",
+  "ble_observation": "No matching IINE/Gamebrick advertisement or AE42 packets seen in completed first scan; unfiltered BLE scan also found no named controller.",
+  "usb_observation": "No controller enumerated at check time; USB cable connection not confirmed.",
+  "interpretation": "Suspected reset loop or other startup fault; cause not established.",
+  "action": "Withdraw this custom candidate from further installation; restore official stock using flash_custom.py restore.",
+  "offline_restore_sha256": "5ad0acbd772c309f6db2ea8f6f0263cd6fbc03d6e72a6e2c26ff1a4eb84d8ae3",
+  "offline_restore_verified": true,
+  "hardware_restore_status": "pending"
+}

@@ -1,0 +1,39 @@
+{"query": "get_info", "direction": "tx", "frame": "b519cc82a3636d64a86765745f696e666fa36b6579a3616c6c"}
+{"query": "get_info", "direction": "rx", "frame": "b42f81cc83a3636d64a87265745f696e666fa96d6f64655f6e616d65a76d745f49494e45a776657273696f6ecd03000000000000000000000000000000000000"}
+{"query": "get_info", "command": 204, "decoded": {"cmd": "ret_info", "mode_name": "mt_IINE", "version": 768}}
+{"query": "get_kb", "direction": "tx", "frame": "b517cc82a3636d64a66765745f6b62a36b6579a3616c6c"}
+{"query": "get_kb", "direction": "rx", "frame": "b44083cc82a3636d64a67265745f6b62a36d61709683a36b6579cc00a2666ecc00a26b62c7030028000183a36b6579cc01a2666ecc00a26b62c703002c001083"}
+{"query": "get_kb", "direction": "rx", "frame": "b44002cca36b6579cc10a2666ecc00a26b62c7030052001183a36b6579cc11a2666ecc00a26b62c7030051001283a36b6579cc12a2666ecc00a26b62c7030050"}
+{"query": "get_kb", "direction": "rx", "frame": "b41b01cc001383a36b6579cc13a2666ecc00a26b62c703004f000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_kb", "command": 204, "decoded": {"cmd": "ret_kb", "map": [{"key": 0, "fn": 0, "kb": {"extension": 0, "data": "280001"}}, {"key": 1, "fn": 0, "kb": {"extension": 0, "data": "2c0010"}}, {"key": 16, "fn": 0, "kb": {"extension": 0, "data": "520011"}}, {"key": 17, "fn": 0, "kb": {"extension": 0, "data": "510012"}}, {"key": 18, "fn": 0, "kb": {"extension": 0, "data": "500013"}}, {"key": 19, "fn": 0, "kb": {"extension": 0, "data": "4f0000"}}]}}
+{"query": "get_mouse", "direction": "tx", "frame": "b51acc82a3636d64a96765745f6d6f757365a36b6579a3616c6c"}
+{"query": "get_mouse", "direction": "rx", "frame": "b44084cc82a3636d64a97265745f6d6f757365a36d61709685a36b6579cc00a3627574cc01a177d10000a178d10000a179d1000085a36b6579cc01a3627574cc"}
+{"query": "get_mouse", "direction": "rx", "frame": "b44003cc02a177d10000a178d10000a179d1000085a36b6579cc10a3627574cc00a177d10000a178d10000a179d1fffe85a36b6579cc11a3627574cc00a177d1"}
+{"query": "get_mouse", "direction": "rx", "frame": "b44002cc0000a178d10000a179d1000285a36b6579cc12a3627574cc00a177d10000a178d1fffea179d1000085a36b6579cc13a3627574cc00a177d10000a178"}
+{"query": "get_mouse", "direction": "rx", "frame": "b40c01ccd10002a179d1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_mouse", "command": 204, "decoded": {"cmd": "ret_mouse", "map": [{"key": 0, "but": 1, "w": 0, "x": 0, "y": 0}, {"key": 1, "but": 2, "w": 0, "x": 0, "y": 0}, {"key": 16, "but": 0, "w": 0, "x": 0, "y": -2}, {"key": 17, "but": 0, "w": 0, "x": 0, "y": 2}, {"key": 18, "but": 0, "w": 0, "x": -2, "y": 0}, {"key": 19, "but": 0, "w": 0, "x": 2, "y": 0}]}}
+{"query": "get_cs", "direction": "tx", "frame": "b517cc82a3636d64a66765745f6373a36b6579a3616c6c"}
+{"query": "get_cs", "direction": "rx", "frame": "b44082cc82a3636d64a67265745f6373a36d61709582a36b6579cd0000a26373cd00cd82a36b6579cd0011a26373cd00e982a36b6579cd0012a26373cd00ea82"}
+{"query": "get_cs", "direction": "rx", "frame": "b41f01cca36b6579cd0013a26373cd00b682a36b6579cd0014a26373cd00b5000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_cs", "command": 204, "decoded": {"cmd": "ret_cs", "map": [{"key": 0, "cs": 205}, {"key": 17, "cs": 233}, {"key": 18, "cs": 234}, {"key": 19, "cs": 182}, {"key": 20, "cs": 181}]}}
+{"query": "get_mt", "direction": "tx", "frame": "b517cc82a3636d64a66765745f6d74a36b6579a3616c6c"}
+{"query": "get_mt", "direction": "rx", "frame": "b44086cc82a3636d64a67265745f6d74a36d61709688a36b6579cc10a46d6f6465cc03a574696d6573cc06a6706572696f64cc00a473696478d000a473696479"}
+{"query": "get_mt", "direction": "rx", "frame": "b44005ccd032a178cd07d0a179cd07d088a36b6579cc12a46d6f6465cc03a574696d6573cc05a6706572696f64cc00a473696478d050a473696479d000a178cd"}
+{"query": "get_mt", "direction": "rx", "frame": "b44004cc05dca179cd089888a36b6579cc11a46d6f6465cc03a574696d6573cc06a6706572696f64cc00a473696478d000a473696479d0cea178cd07d0a179cd"}
+{"query": "get_mt", "direction": "rx", "frame": "b44003cc09c488a36b6579cc13a46d6f6465cc03a574696d6573cc05a6706572696f64cc00a473696478d0b0a473696479d0ffa178cd09c4a179cd089888a36b"}
+{"query": "get_mt", "direction": "rx", "frame": "b44002cc6579cc00a46d6f6465cc00a574696d6573cc00a6706572696f64cc00a473696478d000a473696479d000a178cd0bb8a179cd07d088a36b6579cc01a4"}
+{"query": "get_mt", "direction": "rx", "frame": "b43301cc6d6f6465cc02a574696d6573cc02a6706572696f64cc07a473696478d000a473696479d000a178cd0bb8a179cd09c400000000000000000000000000"}
+{"query": "get_mt", "command": 204, "decoded": {"cmd": "ret_mt", "map": [{"key": 16, "mode": 3, "times": 6, "period": 0, "sidx": 0, "sidy": 50, "x": 2000, "y": 2000}, {"key": 18, "mode": 3, "times": 5, "period": 0, "sidx": 80, "sidy": 0, "x": 1500, "y": 2200}, {"key": 17, "mode": 3, "times": 6, "period": 0, "sidx": 0, "sidy": -50, "x": 2000, "y": 2500}, {"key": 19, "mode": 3, "times": 5, "period": 0, "sidx": -80, "sidy": -1, "x": 2500, "y": 2200}, {"key": 0, "mode": 0, "times": 0, "period": 0, "sidx": 0, "sidy": 0, "x": 3000, "y": 2000}, {"key": 1, "mode": 2, "times": 2, "period": 7, "sidx": 0, "sidy": 0, "x": 3000, "y": 2500}]}}
+{"query": "get_xinput", "direction": "tx", "frame": "b51bcc82a3636d64aa6765745f78696e707574a36b6579a3616c6c"}
+{"query": "get_xinput", "direction": "rx", "frame": "b41981cc82a3636d64aa7265745f78696e707574a36d617090000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_xinput", "command": 204, "decoded": {"cmd": "ret_xinput", "map": []}}
+{"query": "get_dinput", "direction": "tx", "frame": "b51bcc82a3636d64aa6765745f64696e707574a36b6579a3616c6c"}
+{"query": "get_dinput", "direction": "rx", "frame": "b41981cc82a3636d64aa7265745f64696e707574a36d617090000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_dinput", "command": 204, "decoded": {"cmd": "ret_dinput", "map": []}}
+{"query": "get_sleep", "direction": "tx", "frame": "b51acc82a3636d64a96765745f736c656570a36b6579a3616c6c"}
+{"query": "get_sleep", "direction": "rx", "frame": "b42881cc82a3636d64a97265745f736c656570a36d61709182a6646973636f6ecc0aa3636f6ecc0f000000000000000000000000000000000000000000000000"}
+{"query": "get_sleep", "command": 204, "decoded": {"cmd": "ret_sleep", "map": [{"discon": 10, "con": 15}]}}
+{"query": "get_screen", "direction": "tx", "frame": "b51bcc82a3636d64aa6765745f73637265656ea36b6579a3616c6c"}
+{"query": "get_screen", "direction": "rx", "frame": "b44082cc82a3636d64aa7265745f73637265656ea36d61709185a7696f735f766572cd0f00a5696f735f78d10189a5696f735f79d10354a6616e64725f78d104"}
+{"query": "get_screen", "direction": "rx", "frame": "b40f01cc38a6616e64725f79d10a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"query": "get_screen", "command": 204, "decoded": {"cmd": "ret_screen", "map": [{"ios_ver": 3840, "ios_x": 393, "ios_y": 852, "andr_x": 1080, "andr_y": 2560}]}}

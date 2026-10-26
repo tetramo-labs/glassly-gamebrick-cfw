@@ -1,0 +1,129 @@
+{
+  "status": "OFFLINE VERIFIED; custom hardware flash pending",
+  "date": "2026-10-25",
+  "captures": [
+    {
+      "mode": "install",
+      "before_sha256": "5ad0acbd772c309f6db2ea8f6f0263cd6fbc03d6e72a6e2c26ff1a4eb84d8ae3",
+      "stock_sha256": "5ad0acbd772c309f6db2ea8f6f0263cd6fbc03d6e72a6e2c26ff1a4eb84d8ae3",
+      "custom_sha256": "bec28bd21195de6d5ef50a0fb163a5dd8d669aeba2aa38e79b8ca37a2cc2073b",
+      "desired_sha256": "bec28bd21195de6d5ef50a0fb163a5dd8d669aeba2aa38e79b8ca37a2cc2073b",
+      "canonical_stock_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+      "canonical_custom_sha256": "b0c1bdf013ba35a0ad86fc1104412ab788da2bd294e47c0e644f6aaec8298ad8",
+      "storage_preserved": [
+        {
+          "name": "VM",
+          "start": "0x7a000",
+          "size": 8192,
+          "sha256": "015c2fdc6e4ff2919450e0651f48de472e1323e2f8fe31e5391152fe614a5b32",
+          "different_bytes_from_template": 38
+        },
+        {
+          "name": "BTIF",
+          "start": "0x7c000",
+          "size": 4096,
+          "sha256": "010d88162b20e3dbda6dd61c09f5d13a279431ac63c0609aa618ec414211c0bb",
+          "different_bytes_from_template": 0
+        },
+        {
+          "name": "USERIF",
+          "start": "0x7d000",
+          "size": 8192,
+          "sha256": "9eff3fe8275889da4266d2a8ac6dae42ff49f986f372dc50c29d2bbb4c5b7cc9",
+          "different_bytes_from_template": 0
+        }
+      ],
+      "changed_sectors": [
+        8192,
+        24576,
+        28672,
+        53248,
+        69632,
+        204800,
+        208896
+      ],
+      "source_state": "stock",
+      "capture": "research/custom-flash-20261024-102322/before.bin"
+    },
+    {
+      "mode": "install",
+      "before_sha256": "7633d6fc7dafaaf90b31c2c701c0fd47389b8adc9427855d60e307993e386a9f",
+      "stock_sha256": "7633d6fc7dafaaf90b31c2c701c0fd47389b8adc9427855d60e307993e386a9f",
+      "custom_sha256": "d43e4cb4396a824662b5626b4f4548068461c9284e99c98e442b719578045ecc",
+      "desired_sha256": "d43e4cb4396a824662b5626b4f4548068461c9284e99c98e442b719578045ecc",
+      "canonical_stock_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+      "canonical_custom_sha256": "b0c1bdf013ba35a0ad86fc1104412ab788da2bd294e47c0e644f6aaec8298ad8",
+      "storage_preserved": [
+        {
+          "name": "VM",
+          "start": "0x7a000",
+          "size": 8192,
+          "sha256": "015c2fdc6e4ff2919450e0651f48de472e1323e2f8fe31e5391152fe614a5b32",
+          "different_bytes_from_template": 38
+        },
+        {
+          "name": "BTIF",
+          "start": "0x7c000",
+          "size": 4096,
+          "sha256": "010d88162b20e3dbda6dd61c09f5d13a279431ac63c0609aa618ec414211c0bb",
+          "different_bytes_from_template": 0
+        },
+        {
+          "name": "USERIF",
+          "start": "0x7d000",
+          "size": 8192,
+          "sha256": "d2e6abe11c12b16acf25b7bfde90460d1b34768bdb9e04ce335a173bf8da8cff",
+          "different_bytes_from_template": 1
+        }
+      ],
+      "changed_sectors": [
+        8192,
+        24576,
+        28672,
+        53248,
+        69632,
+        204800,
+        208896
+      ],
+      "source_state": "stock",
+      "capture": "research/custom-flash-20261025-132431/before.bin"
+    }
+  ],
+  "oct25_independent_extraction": {
+    "files/app.bin": {
+      "bytes": 199232,
+      "sha256": "8b3cf5bff313e27c4da630bf8759df7217f8a8ed88bcbf83d18c280c09b43221"
+    },
+    "files/cfg_tool.bin": {
+      "bytes": 722,
+      "sha256": "0ccc2fd579597ca9d91e485457673d7f2525e00d5bfe8d081920e95e4062a0f1"
+    },
+    "files/p11_code.bin": {
+      "bytes": 4096,
+      "sha256": "d37e34cc8200cae2a372c1a83f46c1f65db756984e2470b7437734e7b5c5fc4c"
+    },
+    "top/uboot.boot": {
+      "bytes": 4831,
+      "sha256": "a64171c3cf41406e258b9c39300f90d3ba0bf72476d42cdf62664575fd78d012"
+    },
+    "top/isd_config.ini": {
+      "bytes": 122,
+      "sha256": "274a3cae17f7bd8ae6fa086cf5e5dd472d88adebfa51ac661e95d9d2c46027d1"
+    }
+  },
+  "validation": {
+    "full_check_script": "scripts/check-custom.sh passed",
+    "runtime_tests": 7,
+    "interrupted_pages_recovered": 112,
+    "cases": [
+      "both actual captures",
+      "install and restore idempotence",
+      "arbitrary declared storage preserved",
+      "immutable byte changes rejected",
+      "unstable reads rejected",
+      "artifact save failures prevent writes",
+      "template changes rejected",
+      "restore preserves newly changed storage"
+    ]
+  }
+}

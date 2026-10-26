@@ -1,0 +1,39 @@
+{
+  "ghidra": {
+    "version": "12.2",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.2_build/ghidra_12.2_PUBLIC_20261016.zip",
+    "sha256": "2c2cd776db3c1f6a097ba418922378ac3649cadd5e844a6f5f088ae628a7be67"
+  },
+  "cmp": {
+    "url": "https://github.com/camgunz/cmp",
+    "commit": "e564b7a06bd39e7ab2f19f9a616a3d268638a88d"
+  },
+  "processor": {
+    "upstream_commit": "e1bd0707874b77b759401555d24839ad43af1267",
+    "corrections": [
+      "jls unsigned <=, three forms",
+      "jge signed >=, three forms",
+      "25-bit long-call/jump address wrap",
+      "register-list and special-register stack semantics",
+      "32-bit register/immediate shifts",
+      "clz",
+      "48-bit comparisons with expanded immediate",
+      "signed field extraction",
+      "unsigned compare immediate zero extension"
+    ],
+    "limits": [
+      "condition flags and uncommon instruction families remain incomplete",
+      "stack slot ordering follows the related PI32V2 module; no hardware register trace",
+      "function discovery heuristic; generated C is not ground truth",
+      "zero-encoded widths in existing constructors need further audit"
+    ]
+  },
+  "application_sha256": "2fb44f4235bd4ed7183439f31ee2a31fb0052d19dd736e20d1d251fd5e1ff259",
+  "jieli_toolchain": {
+    "url": "https://jl-update.oss-cn-shenzhen.aliyuncs.com/jieli-linux-toolchains-20260730.1.tar.xz",
+    "sha256": "a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd",
+    "host": "Linux AMD64 via Docker on Apple Silicon",
+    "compiler": "Jieli clang 4.0.1; target q32s",
+    "docker_image": "debian@sha256:cba95a21c96c1f5fc2470081829363eed57706634f7dc26e8c6712934303d57a"
+  }
+}

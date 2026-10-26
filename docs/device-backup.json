@@ -1,0 +1,14 @@
+{
+  "inquiry": "0080020220000000424431392020202055424f4f54312e303020202020202020312e3030",
+  "vendor": "BD19",
+  "product": "UBOOT1.00",
+  "loader_sha256": "faa1b519a3ff1b082f11ccafac8c73d31150161ac972ef9f1934002bcbb8df4f",
+  "online": "03b51371cd00d0179932d3a64c2f",
+  "flash_id": "00cd715ab4d0a04037d905bdcd2d",
+  "buffer_size": "00008000a24488a72be1755dbac3",
+  "jedec_id": "cd7113",
+  "size": 524288,
+  "sha256": "9b7c57387ded72fadd162599cfb2b3797fb27e10759918d4e06f879740577cb3",
+  "passes_match": true,
+  "flash_modified": false
+}

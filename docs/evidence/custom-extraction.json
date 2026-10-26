@@ -1,0 +1,22 @@
+{
+  "files/app.bin": {
+    "bytes": 199232,
+    "sha256": "8b3cf5bff313e27c4da630bf8759df7217f8a8ed88bcbf83d18c280c09b43221"
+  },
+  "files/cfg_tool.bin": {
+    "bytes": 722,
+    "sha256": "0ccc2fd579597ca9d91e485457673d7f2525e00d5bfe8d081920e95e4062a0f1"
+  },
+  "files/p11_code.bin": {
+    "bytes": 4096,
+    "sha256": "d37e34cc8200cae2a372c1a83f46c1f65db756984e2470b7437734e7b5c5fc4c"
+  },
+  "top/uboot.boot": {
+    "bytes": 4831,
+    "sha256": "a64171c3cf41406e258b9c39300f90d3ba0bf72476d42cdf62664575fd78d012"
+  },
+  "top/isd_config.ini": {
+    "bytes": 122,
+    "sha256": "274a3cae17f7bd8ae6fa086cf5e5dd472d88adebfa51ac661e95d9d2c46027d1"
+  }
+}

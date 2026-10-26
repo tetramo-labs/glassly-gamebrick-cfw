@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-25",
+  "status": "Custom candidate withdrawn; install/check reject before USB; hardware recovery pending.",
+  "flashed_target_sha256": "bec28bd21195de6d5ef50a0fb163a5dd8d669aeba2aa38e79b8ca37a2cc2073b",
+  "application_sha256": "8b3cf5bff313e27c4da630bf8759df7217f8a8ed88bcbf83d18c280c09b43221",
+  "audit": {
+    "emu_con": "0x80000017",
+    "execution_ranges": [
+      [
+        "0x1e00120",
+        "0x1e2dfc8"
+      ],
+      [
+        "0x40c0",
+        "0x61a8"
+      ],
+      [
+        "0x100000",
+        "0x110000"
+      ]
+    ],
+    "destinations": {
+      "task entry": "0x1e309d0",
+      "0x1e0f194": "0x1e309ec",
+      "0x1e04b86": "0x1e309f8",
+      "0x1e05274": "0x1e309f2"
+    },
+    "errors": [
+      {
+        "code": "HOOK_OUTSIDE_PC_LIMIT",
+        "site": "task entry",
+        "target": "0x1e309d0"
+      },
+      {
+        "code": "HOOK_OUTSIDE_PC_LIMIT",
+        "site": "0x1e0f194",
+        "target": "0x1e309ec"
+      },
+      {
+        "code": "HOOK_OUTSIDE_PC_LIMIT",
+        "site": "0x1e04b86",
+        "target": "0x1e309f8"
+      },
+      {
+        "code": "HOOK_OUTSIDE_PC_LIMIT",
+        "site": "0x1e05274",
+        "target": "0x1e309f2"
+      },
+      {
+        "code": "BRANCH_INTO_INSTRUCTION",
+        "site": "0x1e05256",
+        "target": "0x1e05276"
+      },
+      {
+        "code": "APPENDED_CODE_OUTSIDE_PC_LIMIT",
+        "first": "0x1e309d0",
+        "instruction_count": 160
+      }
+    ],
+    "passes_audit": false,
+    "scope": "Exact stock version: PC limits, hook destinations, BLE function branch boundaries, appended instructions. Not a complete boot emulator."
+  },
+  "sdk": {
+    "repository": "https://github.com/Jieli-Tech/fw-AC63_BT_SDK",
+    "commit": "fdc018de81629e21e594d677cf05f87d288be0f0",
+    "archive": "cpu/bd19/liba/cpu.a",
+    "member": "debug.c.o",
+    "local_bitcode": "research/q32s-analysis/sdk-debug.o",
+    "sha256": "0e23bdf6c7eca27eab02ee656a080e248473c5a7293efb30b71eb9ef124efa22",
+    "decoded_ir": "research/q32s-analysis/sdk-debug.ll",
+    "register_definitions": "include_lib/driver/cpu/bd19/asm/csfr.h"
+  },
+  "instruction_evidence": {
+    "0x1e10a5a": "7601fa0bc0ff17000080c1ffc0e11b000843c0f40119dbf4101bdaf4111bc4ffc04000009c43c6ffa86100008e43c0ff2001e0017843c0ffc8dfe2016843",
+    "0x1e05256": "52f20e00",
+    "0x1e05274": "c1f3bd5b",
+    "0x1e0f898": "60f30000c0ff4a181a00b17a0960cff31fa5"
+  },
+  "exception_path": {
+    "vector_stub": "0x5e20",
+    "handler": "0x1e0f898",
+    "marker_address": "0x1a184a",
+    "marker": "0xab",
+    "reset_routine": "0x42e8",
+    "reset_register": "0x1a18a0",
+    "reset_bits": "0x30",
+    "live_crash_trace_captured": false
+  },
+  "unchanged_ble_state": {
+    "branch": "0x1e05256 -> 0x1e05276",
+    "patched_jump": "0x1e05274..0x1e05277",
+    "interior_decode": "h[r5 + 0x36] = r5",
+    "model_states": [
+      0,
+      1,
+      7
+    ],
+    "model_result": "Unintended low-RAM write and fallthrough to 0x1e05278 with saved frame still on stack. Hardware alignment exceptions are not modeled."
+  },
+  "led": {
+    "reported": "White: three blinks, pause, repeats; controls unresponsive.",
+    "specific_error_code_established": false,
+    "interpretation": "Consistent with recurring startup/reset, not proof of a particular crash site.",
+    "official_guide": "https://iine.store/pages/gamebrick-mini-retro-controller-guide-manual",
+    "guide_mode_colors": {
+      "T": "white",
+      "C": "red",
+      "H": "yellow"
+    }
+  },
+  "old_test_gaps": [
+    "No CPU PC-limit enforcement at custom instruction fetch.",
+    "BLE lifecycle test covered changed state only.",
+    "Flash equality proves programmed bytes, not boot behavior."
+  ],
+  "regression_command": ".venv/bin/python research/test_boot_audit.py -v",
+  "regressions": {
+    "tests": 8,
+    "passed": 8,
+    "scope": "Bounded exact-image regressions, not full boot or hardware validation."
+  },
+  "next_image_ready": false,
+  "verification": {
+    "boot_regressions": "8 passed",
+    "existing_payload_tests": "3 passed",
+    "existing_image_baseline_runtime_tests": "19 passed",
+    "original_backup_copies": "Both verified by scripts/verify-backup.py",
+    "offline_installer_check": "Exit 1 as expected: HOOK_OUTSIDE_PC_LIMIT, APPENDED_CODE_OUTSIDE_PC_LIMIT, BRANCH_INTO_INSTRUCTION",
+    "hardware_writes": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "writes": 50,
+  "sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+  "full_readback_verified": true,
+  "mode": "install",
+  "original_sha256": "9b7c57387ded72fadd162599cfb2b3797fb27e10759918d4e06f879740577cb3",
+  "target_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+  "hardware_functional_test": "pending"
+}

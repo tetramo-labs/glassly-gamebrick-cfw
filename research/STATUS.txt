@@ -1,0 +1,81 @@
+HISTORICAL LOG. Current state: ../docs/findings.md and ../docs/plan.md.
+Backup completed 2026-10-22 23:33. Stock application flashed and fully readback-verified on 2026-10-23 22:26; USB gamepad enumeration returned. Functional tests pending. Earlier contradictory chip/backup conclusions below are superseded.
+
+Gamebrick firmware investigation — 2026-10-22
+
+No firmware has been flashed. Glassly repo unchanged.
+User authorizes experimental firmware work; controller is expendable and wired recovery is acceptable.
+
+Source: https://www.iine.top/products/mi-ni-kong-zhi-qi
+Official update ZIP: https://media.iine.top/legacy-assets/6dd5d46599c6e1eeb8bd2623c15d14c7a3aee61163f46da0df38953c690dac61-zip
+ZIP SHA256: 6dd5d46599c6e1eeb8bd2623c15d14c7a3aee61163f46da0df38953c690dac61
+Package includes L1161 L1162 IINE-reader.ufw, Windows update utility 1.4.40, and instructions.
+Target in firmware: AC632N (Q32S), PID jm832, entry 0x01e00120.
+USB update mode per IINE: power on, connect USB data cable, hold Pairing+B for 2 seconds. Updater should report ONLINE. Do not erase before backup.
+
+Observed device:
+Manufacturer zhuhai_jieli, generic model hid_mouse and revision 0.0.1.
+C mode: Xbox Wireless Controller, all six inputs received by macOS GameController.
+T/H modes: IINE_control / IINE_keyboard.
+All three expose AE40 (write AE41, notify AE42) and AE00 (write AE01, notify AE02).
+No unsolicited button reports on vendor channels; AE02 sends ff upon subscribing.
+SDK source confirms ff advertises RCSP protocol availability.
+No iOS lock/background test has occurred.
+
+Offline candidate:
+Version-locked build-app-patch.py checks stock app SHA256 before any patch.
+Original HID send call at app offset 0x4128 (address 0x01e04248) calls ATT sender 0x01e034b4.
+Patch redirects that call to a 42-byte wrapper appended at 0x01e309d0 (64 bytes total app growth).
+Wrapper sends original HID packet first, then same payload to handle 0x54 (AE42), preserving original return value.
+No report ID prefix; initial test should use C mode.
+patch-flash.py repacks both raw stock layouts, moving config/P11 forward 64 bytes inside existing occupied partition size.
+Stock roundtrip is byte-exact; patched app extraction matches; bootloader, cfg_tool.bin, P11 code, chip configuration and partition boundaries unchanged.
+500 decoded-instruction ABI checks passed with simulated call clobbering and send errors. This is not full CPU emulation or hardware validation.
+
+BLOCKERS / NEXT:
+1. Controller not yet observed on USB. Need USB update mode and readback/recovery validation.
+2. Package contains flash.bin and flash2.bin plus opaque metadata/tail; complete UFW integrity/repack is not yet verified. candidate/*.bin files are NOT installable UFW packages.
+3. jl-uboot-tool currently supports Linux/Windows, not macOS, and lists AC632N support as unknown. Need validated host transport / official updater path.
+4. Back up installed flash/calibration before write; determine installed layout/version, which may differ from the public reader update.
+5. After flashing a validated image, test normal HID plus vendor reports, then iOS background and lock behavior.
+
+Everything is under /tmp/gamebrick-re (temporary). candidate/manifest.json and flash-validation.json contain hashes and details.
+
+Later USB findings:
+- Controller connected as LiteEMF / Hid Gamepade, VID:PID 4353:8009, two HID interfaces.
+- Interface 0 is standard gamepad; interface 1 is vendor usage page FF80, usage 1, 64-byte input/output, no report IDs.
+- HIDAPI can open vendor interface and write reports on macOS. Documented LiteEMF read-only queries 01/03/04/05 in A5 short and A4 long formats returned no responses. No reset/boot/erase/write commands sent.
+- IINE updater unpacked with UPX; it uses the Jieli USB SCSI/mass-storage bootloader transport, not this normal HID interface.
+- User says USB cable is connected. Async request pending: power on + USB, hold Pairing+B for 2 seconds until light off, then confirm.
+- UPX 5.2.1 installed via Homebrew; all other Python dependencies remain in temporary venv.
+- LiteEMF public source cloned for protocol reference. Its 0x12 test-mode command exists, but has NOT been sent or verified for this firmware.
+
+CRITICAL hardware correction:
+Device entered BR34UBOOT1.00, VID:PID 4c4a:3442. BR34 maps to AC638N/AD698N (pi32v2), unlike the official AC632N/BD19 package (Q32S).
+The AC632N candidate is WRONG TARGET for this device. Do not flash it. No flash writes have occurred.
+Need actual BR34 firmware backup and a new target-specific patch.
+
+Correction to USB-name interpretation:
+IORegistry’s IOSCSILogicalUnitNub reports SCSI Vendor Identification BD19, Product UBOOT1.00 despite USB label BR34UBOOT1.00. Chip mismatch is NOT established; do not choose architecture from USB label alone. Await direct inquiry and actual flash readback.
+MacOS storage driver owns interface. Native SCSI plugin failed 0xe00002c7; libusb detach denied access without root. sudo requires authentication.
+backup-controller.py implements USB Bulk-Only transport with an opcode allowlist excluding all erase/flash-program/fuse operations. Allows BD19 RAM-loader upload only at 0x2000 within the loader size, readback verification, jump argument 1, identity and two complete flash reads with SHA256 comparison. Target must match USB 4c4a:3442 AND SCSI BD19/UBOOT1.00.
+Transport framing / forbidden opcode tests passed; hardware run pending macOS administrator prompt via osascript. Log: /tmp/gamebrick-re/backup-launch.log; output device-backup-TIMESTAMP/.
+No flash changes made.
+
+2026-10-22 23:18 transport update:
+User re-entered update mode (light off), bootloader visible. Root libusb detach succeeded, but claim failed IOCreatePlugInInterfaceForService: out of resources on macOS 27.0.1/libusb 1.0.30. No firmware command was sent.
+Built native-usb.m -> native-usb.dylib using Apple's IOUSBHost API, device capture restricted to VID:PID 4c4a:3442, configure 1 with driver matching disabled, bulk endpoints 01/81. backup-controller-native.py uses it with the existing restricted BOT commands. Waiting on macOS administrator prompt. Log backup-native.log, exec session 33160.
+The prior 5-minute helper timed out before physical action. Current helpers wait 30 minutes; total watchdog 35 minutes.
+
+Latest state / handoff — 2026-10-22 23:30:
+Native USB helper captured and configured the bootloader, but opening IOUSBHostInterface failed 0xe00002c9 (Failed [super init]). System tccd log explicitly shows kTCCServiceSystemPolicyRemovableVolumes request for root Python PID 21320 failed to reach the user authorization context. The background osascript administrator launch has auid -1. No firmware commands, RAM loader upload, flash backup, or flash writes have occurred.
+Next step: run the existing backup helper from the user's interactive terminal using:
+sudo /tmp/gamebrick-re/venv/bin/python -u /tmp/gamebrick-re/backup-controller-native.py
+This may allow the removable-storage permission prompt in the user's login session. Do not assume it will work; inspect output. Do not request broad Full Disk Access unless narrower access is insufficient and user explicitly agrees.
+Native helper and library: backup-controller-native.py, native-usb.m, native-usb.dylib. Last log backup-native.log. All helper exec sessions completed. Controller last observed in update mode BR34UBOOT1.00, SCSI BD19 UBOOT1.00. Capture cleanup resets/re-enumerates device; may need Pairing+B again after helper starts.
+Computer-use tool refused access to Ghostty for safety reasons; do not bypass that restriction using another UI automation mechanism. User asked how to reopen this Codex conversation in another console. Current thread ID: 01a1572b-72d1-7933-ad2e-53bb86f2561f.
+
+2026-10-22 23:32: user ran native helper in interactive terminal successfully. Native USB capture, SCSI BD19 identity, official BD19 RAM-loader upload and readback verification all passed. No flash writes. Backup failed before flash reads because FC0B omits density byte (returns full ID >>8), which the original helper wrongly treated as complete JEDEC ID.
+Captured FC0A: 032e1371cd00ee6bd61b8102b366 -> type3 SPI0 NOR; LE ID at payload bytes2..5 = 00cd7113. FC0B 00cd71 corroborates shifted ID. Density19 gives 524288 bytes (512KiB).
+Both backup scripts now parse FC0A for full ID, cross-check FC0B, reject wrong memory type/invalid density, and save metadata before reading. Regression passed against captured response and invalid cases. Ready for user to rerun exact same sudo command in their terminal. Output from first successful transport run: device-backup-20261022-233204/.
+Earlier claim of BR34 hardware mismatch is superseded: direct SCSI identity BD19 and verified BD19 loader execution establish compatibility with BD19 tools. Still need actual flash content comparison before applying the AC632N candidate.

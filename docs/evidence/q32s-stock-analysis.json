@@ -1,0 +1,946 @@
+{
+  "application_sha256": "2fb44f4235bd4ed7183439f31ee2a31fb0052d19dd736e20d1d251fd5e1ff259",
+  "base": "0x1e00120",
+  "size": 198824,
+  "symbols": {
+    "app_entry": "0x1e00120",
+    "transport_tx_ram": "0x4c62",
+    "hid_call_in_ram": "0x4d10",
+    "vendor_call_in_ram": "0x4dc2",
+    "att_send": "0x1e034b4",
+    "report_ccc_ready": "0x1e041ba",
+    "ble_hid_data_send": "0x1e0420c",
+    "ae42_send": "0x1e04250",
+    "att_write_callback": "0x1e04c84",
+    "vendor_transport_send": "0x1e06180",
+    "command_frame_tx": "0x1e064ce",
+    "vendor_command_dispatch": "0x1e075e6",
+    "vendor_frame_receive": "0x1e09f3e",
+    "keyboard_report_sender": "0x1e0c122",
+    "report_processing_candidate": "0x1e0ce10",
+    "connection_handle_ram": "0x29e2",
+    "gatt_profile": "0x1e220be",
+    "hid_handle_table": "0x1e22470"
+  },
+  "ram_copies": [
+    {
+      "file_offset": "0x2dea8",
+      "address": "0x840",
+      "length": "0xc60"
+    },
+    {
+      "file_offset": "0x2eb08",
+      "address": "0x40c0",
+      "length": "0x1d88"
+    }
+  ],
+  "gatt": [
+    {
+      "address": "0x1e220be",
+      "handle": "0x1",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "0018"
+    },
+    {
+      "address": "0x1e220c8",
+      "handle": "0x2",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "020300002a"
+    },
+    {
+      "address": "0x1e220d5",
+      "handle": "0x3",
+      "uuid": "0x2a00",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e220dd",
+      "handle": "0x4",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "020500012a"
+    },
+    {
+      "address": "0x1e220ea",
+      "handle": "0x5",
+      "uuid": "0x2a01",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e220f2",
+      "handle": "0x6",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "020700042a"
+    },
+    {
+      "address": "0x1e220ff",
+      "handle": "0x7",
+      "uuid": "0x2a04",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e22107",
+      "handle": "0x8",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "0118"
+    },
+    {
+      "address": "0x1e22111",
+      "handle": "0x9",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "200a00052a"
+    },
+    {
+      "address": "0x1e2211e",
+      "handle": "0xa",
+      "uuid": "0x2a05",
+      "flags": "0x20",
+      "value": ""
+    },
+    {
+      "address": "0x1e22126",
+      "handle": "0xb",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e22130",
+      "handle": "0xc",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "0a18"
+    },
+    {
+      "address": "0x1e2213a",
+      "handle": "0xd",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "020e00292a"
+    },
+    {
+      "address": "0x1e22147",
+      "handle": "0xe",
+      "uuid": "0x2a29",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e2214f",
+      "handle": "0xf",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021000242a"
+    },
+    {
+      "address": "0x1e2215c",
+      "handle": "0x10",
+      "uuid": "0x2a24",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e22164",
+      "handle": "0x11",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021200252a"
+    },
+    {
+      "address": "0x1e22171",
+      "handle": "0x12",
+      "uuid": "0x2a25",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e22179",
+      "handle": "0x13",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021400272a"
+    },
+    {
+      "address": "0x1e22186",
+      "handle": "0x14",
+      "uuid": "0x2a27",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e2218e",
+      "handle": "0x15",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021600262a"
+    },
+    {
+      "address": "0x1e2219b",
+      "handle": "0x16",
+      "uuid": "0x2a26",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e221a3",
+      "handle": "0x17",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021800282a"
+    },
+    {
+      "address": "0x1e221b0",
+      "handle": "0x18",
+      "uuid": "0x2a28",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e221b8",
+      "handle": "0x19",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021a00232a"
+    },
+    {
+      "address": "0x1e221c5",
+      "handle": "0x1a",
+      "uuid": "0x2a23",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e221cd",
+      "handle": "0x1b",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021c002a2a"
+    },
+    {
+      "address": "0x1e221da",
+      "handle": "0x1c",
+      "uuid": "0x2a2a",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e221e2",
+      "handle": "0x1d",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "021e00502a"
+    },
+    {
+      "address": "0x1e221ef",
+      "handle": "0x1e",
+      "uuid": "0x2a50",
+      "flags": "0x502",
+      "value": ""
+    },
+    {
+      "address": "0x1e221f7",
+      "handle": "0x1f",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "0f18"
+    },
+    {
+      "address": "0x1e22201",
+      "handle": "0x20",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "122100192a"
+    },
+    {
+      "address": "0x1e2220e",
+      "handle": "0x21",
+      "uuid": "0x2a19",
+      "flags": "0x112",
+      "value": ""
+    },
+    {
+      "address": "0x1e22216",
+      "handle": "0x22",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e22220",
+      "handle": "0x23",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "1218"
+    },
+    {
+      "address": "0x1e2222a",
+      "handle": "0x24",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "0625004e2a"
+    },
+    {
+      "address": "0x1e22237",
+      "handle": "0x25",
+      "uuid": "0x2a4e",
+      "flags": "0x6",
+      "value": "01"
+    },
+    {
+      "address": "0x1e22240",
+      "handle": "0x26",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a27004d2a"
+    },
+    {
+      "address": "0x1e2224d",
+      "handle": "0x27",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e22255",
+      "handle": "0x28",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e2225f",
+      "handle": "0x29",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0101"
+    },
+    {
+      "address": "0x1e22269",
+      "handle": "0x2a",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a2b004d2a"
+    },
+    {
+      "address": "0x1e22276",
+      "handle": "0x2b",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e2227e",
+      "handle": "0x2c",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e22288",
+      "handle": "0x2d",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0201"
+    },
+    {
+      "address": "0x1e22292",
+      "handle": "0x2e",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "0e2f004d2a"
+    },
+    {
+      "address": "0x1e2229f",
+      "handle": "0x2f",
+      "uuid": "0x2a4d",
+      "flags": "0x10e",
+      "value": ""
+    },
+    {
+      "address": "0x1e222a7",
+      "handle": "0x30",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0102"
+    },
+    {
+      "address": "0x1e222b1",
+      "handle": "0x31",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a32004d2a"
+    },
+    {
+      "address": "0x1e222be",
+      "handle": "0x32",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e222c6",
+      "handle": "0x33",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e222d0",
+      "handle": "0x34",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0301"
+    },
+    {
+      "address": "0x1e222da",
+      "handle": "0x35",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a36004d2a"
+    },
+    {
+      "address": "0x1e222e7",
+      "handle": "0x36",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e222ef",
+      "handle": "0x37",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e222f9",
+      "handle": "0x38",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0401"
+    },
+    {
+      "address": "0x1e22303",
+      "handle": "0x39",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a3a004d2a"
+    },
+    {
+      "address": "0x1e22310",
+      "handle": "0x3a",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e22318",
+      "handle": "0x3b",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e22322",
+      "handle": "0x3c",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0501"
+    },
+    {
+      "address": "0x1e2232c",
+      "handle": "0x3d",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a3e004d2a"
+    },
+    {
+      "address": "0x1e22339",
+      "handle": "0x3e",
+      "uuid": "0x2a4d",
+      "flags": "0x11a",
+      "value": ""
+    },
+    {
+      "address": "0x1e22341",
+      "handle": "0x3f",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e2234b",
+      "handle": "0x40",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0601"
+    },
+    {
+      "address": "0x1e22355",
+      "handle": "0x41",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "0e42004d2a"
+    },
+    {
+      "address": "0x1e22362",
+      "handle": "0x42",
+      "uuid": "0x2a4d",
+      "flags": "0x10e",
+      "value": ""
+    },
+    {
+      "address": "0x1e2236a",
+      "handle": "0x43",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0202"
+    },
+    {
+      "address": "0x1e22374",
+      "handle": "0x44",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "0e45004d2a"
+    },
+    {
+      "address": "0x1e22381",
+      "handle": "0x45",
+      "uuid": "0x2a4d",
+      "flags": "0x10e",
+      "value": ""
+    },
+    {
+      "address": "0x1e22389",
+      "handle": "0x46",
+      "uuid": "0x2908",
+      "flags": "0x2",
+      "value": "0302"
+    },
+    {
+      "address": "0x1e22393",
+      "handle": "0x47",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "0248004b2a"
+    },
+    {
+      "address": "0x1e223a0",
+      "handle": "0x48",
+      "uuid": "0x2a4b",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e223a8",
+      "handle": "0x49",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "1a4a00332a"
+    },
+    {
+      "address": "0x1e223b5",
+      "handle": "0x4a",
+      "uuid": "0x2a33",
+      "flags": "0x1a",
+      "value": ""
+    },
+    {
+      "address": "0x1e223bd",
+      "handle": "0x4b",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e223c7",
+      "handle": "0x4c",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "024d004a2a"
+    },
+    {
+      "address": "0x1e223d4",
+      "handle": "0x4d",
+      "uuid": "0x2a4a",
+      "flags": "0x102",
+      "value": ""
+    },
+    {
+      "address": "0x1e223dc",
+      "handle": "0x4e",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "044f004c2a"
+    },
+    {
+      "address": "0x1e223e9",
+      "handle": "0x4f",
+      "uuid": "0x2a4c",
+      "flags": "0x104",
+      "value": ""
+    },
+    {
+      "address": "0x1e223f1",
+      "handle": "0x50",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "40ae"
+    },
+    {
+      "address": "0x1e223fb",
+      "handle": "0x51",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "04520041ae"
+    },
+    {
+      "address": "0x1e22408",
+      "handle": "0x52",
+      "uuid": "0xae41",
+      "flags": "0x104",
+      "value": ""
+    },
+    {
+      "address": "0x1e22410",
+      "handle": "0x53",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "10540042ae"
+    },
+    {
+      "address": "0x1e2241d",
+      "handle": "0x54",
+      "uuid": "0xae42",
+      "flags": "0x10",
+      "value": ""
+    },
+    {
+      "address": "0x1e22425",
+      "handle": "0x55",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    },
+    {
+      "address": "0x1e2242f",
+      "handle": "0x80",
+      "uuid": "0x2800",
+      "flags": "0x2",
+      "value": "00ae"
+    },
+    {
+      "address": "0x1e22439",
+      "handle": "0x81",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "04820001ae"
+    },
+    {
+      "address": "0x1e22446",
+      "handle": "0x82",
+      "uuid": "0xae01",
+      "flags": "0x104",
+      "value": ""
+    },
+    {
+      "address": "0x1e2244e",
+      "handle": "0x83",
+      "uuid": "0x2803",
+      "flags": "0x2",
+      "value": "10840002ae"
+    },
+    {
+      "address": "0x1e2245b",
+      "handle": "0x84",
+      "uuid": "0xae02",
+      "flags": "0x10",
+      "value": ""
+    },
+    {
+      "address": "0x1e22463",
+      "handle": "0x85",
+      "uuid": "0x2902",
+      "flags": "0x10a",
+      "value": "0000"
+    }
+  ],
+  "hid_report_handles": {
+    "1": "0x27",
+    "2": "0x2b",
+    "3": "0x32",
+    "4": "0x36",
+    "5": "0x3a",
+    "6": "0x3e"
+  },
+  "queries": [
+    {
+      "query": "get_info",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_info",
+        "mode_name": "mt_IINE",
+        "version": 768
+      }
+    },
+    {
+      "query": "get_kb",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_kb",
+        "map": [
+          {
+            "key": 0,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "280001"
+            }
+          },
+          {
+            "key": 1,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "2c0010"
+            }
+          },
+          {
+            "key": 16,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "520011"
+            }
+          },
+          {
+            "key": 17,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "510012"
+            }
+          },
+          {
+            "key": 18,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "500013"
+            }
+          },
+          {
+            "key": 19,
+            "fn": 0,
+            "kb": {
+              "extension": 0,
+              "data": "4f0000"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query": "get_mouse",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_mouse",
+        "map": [
+          {
+            "key": 0,
+            "but": 1,
+            "w": 0,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "key": 1,
+            "but": 2,
+            "w": 0,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "key": 16,
+            "but": 0,
+            "w": 0,
+            "x": 0,
+            "y": -2
+          },
+          {
+            "key": 17,
+            "but": 0,
+            "w": 0,
+            "x": 0,
+            "y": 2
+          },
+          {
+            "key": 18,
+            "but": 0,
+            "w": 0,
+            "x": -2,
+            "y": 0
+          },
+          {
+            "key": 19,
+            "but": 0,
+            "w": 0,
+            "x": 2,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "query": "get_cs",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_cs",
+        "map": [
+          {
+            "key": 0,
+            "cs": 205
+          },
+          {
+            "key": 17,
+            "cs": 233
+          },
+          {
+            "key": 18,
+            "cs": 234
+          },
+          {
+            "key": 19,
+            "cs": 182
+          },
+          {
+            "key": 20,
+            "cs": 181
+          }
+        ]
+      }
+    },
+    {
+      "query": "get_mt",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_mt",
+        "map": [
+          {
+            "key": 16,
+            "mode": 3,
+            "times": 6,
+            "period": 0,
+            "sidx": 0,
+            "sidy": 50,
+            "x": 2000,
+            "y": 2000
+          },
+          {
+            "key": 18,
+            "mode": 3,
+            "times": 5,
+            "period": 0,
+            "sidx": 80,
+            "sidy": 0,
+            "x": 1500,
+            "y": 2200
+          },
+          {
+            "key": 17,
+            "mode": 3,
+            "times": 6,
+            "period": 0,
+            "sidx": 0,
+            "sidy": -50,
+            "x": 2000,
+            "y": 2500
+          },
+          {
+            "key": 19,
+            "mode": 3,
+            "times": 5,
+            "period": 0,
+            "sidx": -80,
+            "sidy": -1,
+            "x": 2500,
+            "y": 2200
+          },
+          {
+            "key": 0,
+            "mode": 0,
+            "times": 0,
+            "period": 0,
+            "sidx": 0,
+            "sidy": 0,
+            "x": 3000,
+            "y": 2000
+          },
+          {
+            "key": 1,
+            "mode": 2,
+            "times": 2,
+            "period": 7,
+            "sidx": 0,
+            "sidy": 0,
+            "x": 3000,
+            "y": 2500
+          }
+        ]
+      }
+    },
+    {
+      "query": "get_xinput",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_xinput",
+        "map": []
+      }
+    },
+    {
+      "query": "get_dinput",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_dinput",
+        "map": []
+      }
+    },
+    {
+      "query": "get_sleep",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_sleep",
+        "map": [
+          {
+            "discon": 10,
+            "con": 15
+          }
+        ]
+      }
+    },
+    {
+      "query": "get_screen",
+      "command": 204,
+      "decoded": {
+        "cmd": "ret_screen",
+        "map": [
+          {
+            "ios_ver": 3840,
+            "ios_x": 393,
+            "ios_y": 852,
+            "andr_x": 1080,
+            "andr_y": 2560
+          }
+        ]
+      }
+    }
+  ]
+}
