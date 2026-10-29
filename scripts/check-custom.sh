@@ -15,6 +15,7 @@ echo "Current unit: $unit"
 .venv/bin/python research/test_stock_protocol.py -v
 .venv/bin/python research/test_stock_update.py
 .venv/bin/python research/test_flasher.py -v
+.venv/bin/python research/test_usb_transport.py -v
 .venv/bin/python scripts/verify-backup.py
 .venv/bin/python research/jl-misctools/firmware/fwunpack_newfw.py --dirname "research/custom-prepared/$unit/independent-unpack" "research/custom-prepared/$unit/custom-device-layout.bin" > "research/custom-prepared/$unit/unpack.log" 2>&1
 .venv/bin/python research/verify-custom-extraction.py

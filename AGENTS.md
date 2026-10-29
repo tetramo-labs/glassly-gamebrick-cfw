@@ -8,7 +8,7 @@ Keep original backups immutable. Confirm unit1's copies against `docs/device-bac
 
 Hardware operations need explicit target checks and bounded timeouts. Stop on identity, checksum or readback mismatches. Do not weaken those checks to get past a failure.
 
-Run the native USB helper from an interactive terminal; background administrator processes failed macOS Removable Volumes authorization. Computer-use access to Ghostty was denied; do not work around that UI restriction. Ask the user to run a concrete command when terminal credentials are needed.
+Run the flash tools from an interactive terminal; background administrator processes failed macOS Removable Volumes authorization. `research/usb_transport.py` is the only platform-specific layer: the IOUSBHost helper with Bulk-Only framing on macOS, and jl-uboot-tool's SCSI pass-through (`\\.\PhysicalDriveN` on Windows, `/dev/sg*` on Linux) elsewhere. Windows and Linux have not been run against a controller yet; every CDB still passes the Transport allowlist first. Computer-use access to Ghostty was denied; do not work around that UI restriction. Ask the user to run a concrete command when terminal credentials are needed.
 
 Keep device dumps, OEM firmware and downloaded dependencies local and ignored by Git. Record hashes and pinned source revisions. Do not publish these artifacts or create a remote unless requested.
 

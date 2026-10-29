@@ -183,7 +183,7 @@ class BootAuditTests(unittest.TestCase):
             with self.subTest(mode=mode), patch.object(sys,'argv',['flash_custom.py',mode]), \
                  patch.object(flash_custom,'prepare',return_value=(stock,custom,metadata)), \
                  patch.object(flash_custom,'candidate_application',return_value=self.failed), \
-                 patch.object(flash_custom.ctypes,'CDLL') as usb, \
+                 patch.object(flash_custom,'open_link') as usb, \
                  patch.object(Path,'mkdir') as mkdir:
                 with self.assertRaisesRegex(RuntimeError,'rejected before USB'):
                     flash_custom.main()

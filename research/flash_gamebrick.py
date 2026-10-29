@@ -9,19 +9,20 @@ application area, and verifies the entire flash afterwards. Runtime storage and 
 never written. Needs macOS, the Jieli USB update mode (Pairing+B for two seconds after power-on
 with USB connected) and the pinned IINE update archive, downloaded automatically.
 """
-import argparse, ctypes, json, os, signal, sys, time
+import argparse, json, os, sys, time
 from pathlib import Path
 from flash_stock import Transport, program_image, SIZE, require, digest
 from gamebrick_flasher import ROOT, classify, custom_application, oem_application, oem_archive, plan
+from usb_transport import open_link, wait_for_controller, update_mode_instructions, require_privileges, start_watchdog, give_back_ownership
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('mode', choices=['install', 'restore', 'backup'])
     parser.add_argument('--oem-zip', help='rebuild the applications from this official IINE update archive instead of using the committed copies')
     args = parser.parse_args()
+    require_privileges()
     output = ROOT/('gamebrick-'+args.mode+'-'+time.strftime('%Y%m%d-%H%M%S'))
-    output.mkdir(); owner = ROOT.stat().st_uid
-    if os.geteuid() == 0: os.chown(output, owner, -1)
+    output.mkdir(); give_back_ownership(output, ROOT)
     log = (output/'operation.log').open('w', buffering=1)
     class Tee:
         def __init__(self, stream): self.stream = stream
@@ -35,20 +36,12 @@ def main():
         oem = oem_application(oem_archive(args.oem_zip)) if args.oem_zip else oem_application()
         custom = custom_application(oem if args.oem_zip else None)
         print('Official and Glassly applications verified.', flush=True)
-    native = ctypes.CDLL(str(ROOT/'native-usb.dylib'))
-    native.gb_error.restype = ctypes.c_char_p
-    native.gb_transfer.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
-    signal.alarm(2100); deadline = time.monotonic() + 1800; opened = False
+    link = open_link(); start_watchdog(2100)
     try:
         print('Waiting for the controller (up to 30 minutes).', flush=True)
-        print('With the controller switched ON and plugged into this Mac, hold Pairing + B for about two seconds until its light goes out, then release both.', flush=True)
-        while True:
-            code = native.gb_open()
-            if code == 0: opened = True; break
-            require(code == -2, native.gb_error().decode())
-            require(time.monotonic() < deadline, 'Timed out waiting for the controller')
-            time.sleep(0.25)
-        device = Transport(native, []); device.initialize()
+        print(update_mode_instructions(), flush=True)
+        wait_for_controller(link, time.monotonic() + 1800)
+        device = Transport(link, []); device.initialize()
         saved = {}
         def save(name, data):
             with (output/name).open('xb') as f:
@@ -80,9 +73,8 @@ def main():
             print('Unplug the controller, power-cycle it, then pair it in the Glassly App.' if args.mode == 'install'
                   else 'Unplug the controller and power-cycle it; it is back on the official firmware.', flush=True)
     finally:
-        if opened: native.gb_close()
-        for p in output.iterdir():
-            if os.geteuid() == 0: os.chown(p, owner, -1)
+        link.close()
+        give_back_ownership(output, ROOT)
 
 def program_with_plan(device, source_and_target, save):
     """Read twice, plan from the first read, then hand program_live images that already carry the live storage."""

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Install custom firmware or restore stock, preserving current runtime storage."""
-import argparse, ctypes, json, os, signal, sys, time
+import argparse, json, os, sys, time
 from boot_audit import require_boot_safe
 from custom_image import prepare, STOCK_SHA, CUSTOM_SHA, SECTORS, DEST, NAME
 from custom_runtime import validate_templates, program_preserving_storage
 from flash_stock import Transport, ROOT, require, digest
+from usb_transport import open_link, wait_for_controller, update_mode_instructions, require_privileges, start_watchdog, give_back_ownership
 TARGET_SHA = CUSTOM_SHA
 
 def candidate_application():
@@ -25,9 +26,9 @@ def main():
     if args.mode == 'check':
         print(f'Offline image checks passed for {NAME}. No USB access. Hardware validation pending.')
         return
+    require_privileges()
     output = ROOT / ('custom-flash-' + NAME + '-' + time.strftime('%Y%m%d-%H%M%S'))
-    output.mkdir(); owner = ROOT.stat().st_uid
-    if os.geteuid() == 0: os.chown(output, owner, -1)
+    output.mkdir(); give_back_ownership(output, ROOT)
     log = (output/'operation.log').open('w', buffering=1)
     class Tee:
         def __init__(self, stream): self.stream = stream
@@ -36,19 +37,11 @@ def main():
     sys.stdout = Tee(sys.stdout); sys.stderr = Tee(sys.stderr)
     print('Output:', output, flush=True)
     print('Device:', NAME, 'Operation:', args.mode, flush=True)
-    native = ctypes.CDLL(str(ROOT/'native-usb.dylib'))
-    native.gb_error.restype = ctypes.c_char_p
-    native.gb_transfer.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
-    signal.alarm(2100); deadline = time.monotonic() + 1800; opened = False
+    link = open_link(); start_watchdog(2100)
     try:
-        print('Waiting up to 30 minutes for update mode (Pairing+B for two seconds).', flush=True)
-        while True:
-            code = native.gb_open()
-            if code == 0: opened = True; break
-            require(code == -2, native.gb_error().decode())
-            require(time.monotonic() < deadline, 'Timed out waiting for controller')
-            time.sleep(0.25)
-        device = Transport(native, manifest['changed_sectors']); device.initialize()
+        print('Waiting for the controller (up to 30 minutes).', flush=True); print(update_mode_instructions(), flush=True)
+        wait_for_controller(link, time.monotonic() + 1800)
+        device = Transport(link, manifest['changed_sectors']); device.initialize()
         def save_artifact(name, data):
             with (output/name).open('xb') as f:
                 f.write(data); f.flush(); os.fsync(f.fileno())
@@ -58,7 +51,6 @@ def main():
         print('FLASH VERIFIED:', report['sha256'], flush=True)
         print('Power-cycle, verify normal HID, then test AE42 notifications.', flush=True)
     finally:
-        if opened: native.gb_close()
-        for p in output.iterdir():
-            if os.geteuid() == 0: os.chown(p, owner, -1)
+        link.close()
+        give_back_ownership(output, ROOT)
 if __name__ == '__main__': main()

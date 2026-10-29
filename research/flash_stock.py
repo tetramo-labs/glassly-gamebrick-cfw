@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Install the OEM application or restore the original backup on this controller."""
-import argparse,ctypes,hashlib,json,os,signal,struct,sys,time
+import argparse,hashlib,json,os,struct,sys,time
 from pathlib import Path
 from stock_update import ROOT,NAME,BACKUP,ORIGINAL_SHA,STOCK_SHA,OUT,require,digest,prepare
+from usb_transport import open_link,wait_for_controller,update_mode_instructions,require_privileges,start_watchdog,give_back_ownership
 from jltech.crc import jl_crc16
 SIZE=0x80000
 SECTOR=4096
@@ -14,15 +15,9 @@ STORAGE=(('VM',0x7a000,0x2000,0x12),('BTIF',0x7c000,0x1000,0x92),('USERIF',0x7d0
 LOADER_SHA='faa1b519a3ff1b082f11ccafac8c73d31150161ac972ef9f1934002bcbb8df4f'
 
 class Transport:
-    def __init__(self,native,sectors):
-        self.native=native;self.sectors=frozenset(sectors);self.tag=0;self.writes_enabled=False
-    def transfer(self,ep,data_or_size):
-        if ep==1: data=bytes(data_or_size);buf=ctypes.create_string_buffer(data);size=len(data)
-        else:size=data_or_size;buf=ctypes.create_string_buffer(size)
-        count=self.native.gb_transfer(ep,buf,size,10000)
-        require(count>=0,self.native.gb_error().decode())
-        require(count==size,f'Short USB transfer: {count}/{size}')
-        return buf.raw[:count]
+    """Command allowlist and bounds over a platform link (usb_transport). Every CDB is checked here first."""
+    def __init__(self,link,sectors):
+        self.link=link;self.sectors=frozenset(sectors);self.writes_enabled=False
     def execute(self,cdb,out=None,n=0):
         require(0<len(cdb)<=16 and not(out is not None and n),'Invalid command')
         op=int.from_bytes(cdb[:2],'big');addr=int.from_bytes(cdb[2:6],'big')
@@ -40,14 +35,8 @@ class Transport:
         elif op==0xfb08:require(cdb[2:8]==bytes.fromhex('000020000001') and out is None and n==16,'Invalid RAM jump')
         elif op==0xfd05:require(0<=addr and addr+n<=SIZE and n==PAGE and out is None and int.from_bytes(cdb[6:8],'big')==n,'Invalid flash read')
         else:require(op in (0xfc0a,0xfc0b,0xfc14) and out is None and n==16,'Forbidden command')
-        self.tag+=1;size=len(out) if out is not None else n
-        cbw=struct.pack('<4sIIBBB16s',b'USBC',self.tag,size,0x80 if n else 0,0,len(cdb),cdb)
-        self.transfer(1,cbw)
-        data=b''
-        if out is not None:self.transfer(1,out)
-        elif n:data=self.transfer(0x81,n)
-        csw=self.transfer(0x81,13)
-        require(struct.unpack('<4sIIB',csw)==(b'USBS',self.tag,0,0),'Failed USB command status')
+        data=self.link.execute(cdb,out,n)
+        require(len(data)==n,f'Short reply: {len(data)}/{n}')
         return data
     def command(self,op,args=b'',out=None,n=16):
         return self.execute((op.to_bytes(2,'big')+args).ljust(16,b'\xff'),out,n=0 if out is not None else n)
@@ -139,8 +128,9 @@ def main():
     require(digest(target)==TARGET_SHA,'Prepared update hash mismatch; rebuild and review before flashing')
     print('Device:',NAME,'backup',BACKUP.parent.name,flush=True)
     sectors=[a for a in range(0,SIZE,SECTOR) if original[a:a+SECTOR]!=target[a:a+SECTOR]]
-    result=ROOT/('stock-flash-'+NAME+'-'+time.strftime('%Y%m%d-%H%M%S'));result.mkdir();owner=ROOT.stat().st_uid
-    if os.geteuid()==0:os.chown(result,owner,-1)
+    require_privileges()
+    result=ROOT/('stock-flash-'+NAME+'-'+time.strftime('%Y%m%d-%H%M%S'));result.mkdir()
+    give_back_ownership(result,ROOT)
     log=(result/'operation.log').open('w',buffering=1)
     class Tee:
         def __init__(self,stream):self.stream=stream
@@ -148,18 +138,11 @@ def main():
         def flush(self):self.stream.flush();log.flush()
     sys.stdout=Tee(sys.stdout);sys.stderr=Tee(sys.stderr)
     print('Output:',result,flush=True);print('Operation:',args.mode,flush=True)
-    native=ctypes.CDLL(str(ROOT/'native-usb.dylib'));native.gb_error.restype=ctypes.c_char_p
-    native.gb_transfer.argtypes=[ctypes.c_int,ctypes.c_void_p,ctypes.c_int,ctypes.c_int]
-    signal.alarm(2100);deadline=time.monotonic()+1800;opened=False
+    link=open_link();start_watchdog(2100)
     try:
-        print('Waiting up to 30 minutes for update mode (Pairing+B for two seconds).',flush=True)
-        while True:
-            code=native.gb_open()
-            if code==0:opened=True;break
-            require(code==-2,native.gb_error().decode())
-            require(time.monotonic()<deadline,'Timed out waiting for controller')
-            time.sleep(0.25)
-        transport=Transport(native,sectors);transport.initialize()
+        print('Waiting for the controller (up to 30 minutes).',flush=True);print(update_mode_instructions(),flush=True)
+        wait_for_controller(link,time.monotonic()+1800)
+        transport=Transport(link,sectors);transport.initialize()
         # Flush the pre-write read to storage before any sector is erased.
         def save_before(data):
             with (result/'before.bin').open('wb') as f:f.write(data);f.flush();os.fsync(f.fileno())
@@ -169,7 +152,6 @@ def main():
         print('FLASH VERIFIED:',report['sha256'],flush=True)
         print('Power-cycle the controller, then test all buttons and pairing.',flush=True)
     finally:
-        if opened:native.gb_close()
-        for p in result.iterdir():
-            if os.geteuid()==0:os.chown(p,owner,-1)
+        link.close()
+        give_back_ownership(result,ROOT)
 if __name__=='__main__':main()

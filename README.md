@@ -6,10 +6,14 @@ Everything the stock controller does is kept. The patch adds one notification st
 
 ## Flash your Gamebrick
 
-You need a Mac, the controller's USB-C **data** cable, and about ten minutes. The controller can only be flashed over USB: it has no over-the-air update path a phone could use.
+You need a computer running macOS, Windows or Linux, the controller's USB-C **data** cable, and about ten minutes. The controller can only be flashed over USB: it has no over-the-air update path a phone could use. The Glassly application and IINE's official one are included in this repository and hash-checked on every run; nothing is downloaded.
+
+The flasher has been run on macOS. The Windows and Linux paths use the operating system's own SCSI pass-through, the same mechanism the upstream Jieli tooling uses, but have not yet been exercised on a controller. If you try one, please open an issue with the result either way.
+
+### macOS
 
 1. Install the Xcode Command Line Tools if you have not: `xcode-select --install`.
-2. Get the tool and set it up (downloads two small pinned helper repositories and builds the USB transport):
+2. Get the tool and set it up (fetches two small pinned helper repositories and builds the USB transport):
 
    ```sh
    git clone https://github.com/tetramo-labs/glassly-gamebrick-cfw.git
@@ -17,16 +21,54 @@ You need a Mac, the controller's USB-C **data** cable, and about ten minutes. Th
    ./scripts/setup.sh
    ```
 
-3. Start the flasher from your own terminal (it needs `sudo` for USB access, and macOS will ask for permission to access removable volumes the first time):
+3. Start the flasher from your own terminal. It needs `sudo` for USB access, and macOS asks for permission to access removable volumes the first time:
 
    ```sh
    sudo .venv/bin/python -u research/flash_gamebrick.py install
    ```
 
-   The Glassly application and IINE's official one are in `firmware/dist`, hash-checked on every run; nothing is downloaded. It waits for the controller.
-
-4. Put the controller in update mode: with it **powered on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. The flasher takes it from there and ends with `FLASH VERIFIED`.
+4. Put the controller in update mode when the flasher asks: with it **switched on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. The flasher takes it from there and ends with `FLASH VERIFIED`.
 5. Unplug, power-cycle, and pair it in the Glassly App under Controllers. Any mode works (T, C or H).
+
+### Windows
+
+1. Install [Python 3](https://www.python.org/downloads/windows/) (tick "Add python.exe to PATH") and [Git for Windows](https://git-scm.com/download/win). No driver is needed: in update mode the controller is a plain USB disk.
+2. Open **Terminal** or **PowerShell as Administrator** (the flasher talks to the controller through raw disk access, which Windows only allows to administrators), then:
+
+   ```powershell
+   git clone https://github.com/tetramo-labs/glassly-gamebrick-cfw.git
+   cd glassly-gamebrick-cfw
+   python scripts\setup.py
+   ```
+
+3. In the same Administrator window:
+
+   ```powershell
+   .venv\Scripts\python -u research\flash_gamebrick.py install
+   ```
+
+4. Put the controller in update mode when the flasher asks: with it **switched on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. If Windows offers to format the new drive, close that dialog; the flasher does not need it. It ends with `FLASH VERIFIED`.
+5. Unplug, power-cycle, and pair it in the Glassly App under Controllers.
+
+### Linux
+
+1. Install Python 3 and Git from your distribution. The flasher uses the kernel's SCSI generic devices (`/dev/sg*`), which every mainstream kernel has.
+2. Set up:
+
+   ```sh
+   git clone https://github.com/tetramo-labs/glassly-gamebrick-cfw.git
+   cd glassly-gamebrick-cfw
+   ./scripts/setup.sh
+   ```
+
+3. Start the flasher with `sudo` (or as a user in the `disk` group):
+
+   ```sh
+   sudo .venv/bin/python -u research/flash_gamebrick.py install
+   ```
+
+4. Put the controller in update mode when the flasher asks: with it **switched on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. If your desktop auto-mounts the new disk, unmount it first; a mounted drive can hold the device busy. It ends with `FLASH VERIFIED`.
+5. Unplug, power-cycle, and pair it in the Glassly App under Controllers.
 
 If the controller was never updated by IINE's Windows tool, this installs the current official application and the Glassly patch in one pass. If it already runs the official update, only eight sectors change. Running it again on a flashed controller does nothing.
 
@@ -39,11 +81,7 @@ If the controller was never updated by IINE's Windows tool, this installs the cu
 
 ### Going back to the official firmware
 
-```sh
-sudo .venv/bin/python -u research/flash_gamebrick.py restore
-```
-
-Same update-mode dance; this puts the official IINE application back. `backup` reads the flash without writing anything.
+Run the same command with `restore` instead of `install` (on Windows, `.venv\Scripts\python -u research\flash_gamebrick.py restore` from an Administrator window). Same update-mode dance; this puts the official IINE application back. `backup` reads the flash without writing anything.
 
 ### Buttons in Glassly
 
@@ -66,9 +104,3 @@ The flasher stops before writing on anything it does not recognise. If it stops 
 - [Plan](docs/plan.md), [resources](docs/resources.md), [Q32S notes](docs/q32s.md).
 
 The Glassly App side lives in the Glassly repository (`IINE Gamebrick` controller, source 5).
-
-## Developing
-
-`./scripts/setup.sh --research` also fetches the analysis sources and compiles the Q32S SLEIGH description. Building the payload needs Docker and the pinned Jieli toolchain (see [decoder notes](docs/q32s-decoder.md)); `./scripts/check-custom.sh` rebuilds it, repackages the per-unit images, and runs every offline regression, including the boot audit and the one-shot flasher tests. Device dumps, OEM firmware and downloaded dependencies stay local and out of Git; `sources.lock.json` pins the upstream revisions.
-
-Third-party sources retain their licenses.
