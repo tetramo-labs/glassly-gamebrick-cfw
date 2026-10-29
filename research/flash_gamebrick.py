@@ -40,7 +40,8 @@ def main():
     native.gb_transfer.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
     signal.alarm(2100); deadline = time.monotonic() + 1800; opened = False
     try:
-        print('Waiting up to 30 minutes for update mode: power on with USB connected, hold Pairing+B for two seconds until the light goes out.', flush=True)
+        print('Waiting for the controller (up to 30 minutes).', flush=True)
+        print('With the controller switched ON and plugged into this Mac, hold Pairing + B for about two seconds until its light goes out, then release both.', flush=True)
         while True:
             code = native.gb_open()
             if code == 0: opened = True; break
