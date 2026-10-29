@@ -1,7 +1,7 @@
 """Runtime-storage preservation, firmware rejection and NOR fault injection."""
 import contextlib, io, random, unittest
 from pathlib import Path
-from custom_image import prepare, ROOT
+from custom_image import prepare, ROOT, NAME
 from custom_runtime import plan, program_preserving_storage, STORAGE, SECTORS
 from test_custom_image import NOR
 from flash_stock import SIZE
@@ -14,11 +14,12 @@ class RuntimeTests(unittest.TestCase):
   if save is None:save=lambda name,data:None
   with contextlib.redirect_stdout(io.StringIO()):
    return program_preserving_storage(device,self.stock,self.custom,mode,save)
+ @unittest.skipUnless(NAME=='unit1','captures belong to unit1')
  def test_both_actual_captures(self):
   for directory in ['custom-flash-20261024-102322','custom-flash-20261025-132431']:
    before=(ROOT/directory/'before.bin').read_bytes();files={};d=NOR(before,SECTORS)
    report=self.program(d,save=files.__setitem__)
-   self.assertEqual(report['writes'],7);self.assertEqual(files['before.bin'],before)
+   self.assertEqual(report['writes'],8);self.assertEqual(files['before.bin'],before)
    self.assertEqual(files['target.bin'],bytes(d.data));self.assertEqual(files['restore-stock.bin'],before)
    self.assertEqual(self.program(d)['writes'],0)
    self.program(d,'restore');self.assertEqual(bytes(d.data),before)
@@ -26,8 +27,8 @@ class RuntimeTests(unittest.TestCase):
   before=bytearray(self.stock);rng=random.Random(1162)
   for _,a,n,_ in STORAGE:before[a:a+n]=rng.randbytes(n)
   baseline=NOR(before,SECTORS);self.program(baseline)
-  self.assertEqual(baseline.pages,112)
-  for page in range(1,113):
+  self.assertEqual(baseline.pages,128)
+  for page in range(1,129):
    with self.subTest(page=page):
     d=NOR(before,SECTORS,fail=page)
     with self.assertRaises(RuntimeError):self.program(d)

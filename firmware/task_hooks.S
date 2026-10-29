@@ -33,7 +33,11 @@ gb_task_tick:
 .p2align 1
 .type gb_ble_tail,@function
 gb_ble_tail:
-  /* Replaces a two-byte call plus the original state-function epilogue. */
+  /* Replaces the two register moves at 0x01e05270. The stock call at 0x01e05274
+     and the epilogue at 0x01e05276 stay in place, so the unchanged-state branch
+     at 0x01e05256 still lands on an intact return. r0 already holds the event. */
+  r1 = r5
+  r2 = r4
   call gb_ble_changed
   {pc, r6-r4} = [sp++]
 .size gb_ble_tail, .-gb_ble_tail

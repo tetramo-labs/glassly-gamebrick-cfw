@@ -1,0 +1,19 @@
+{
+  "current": "unit2",
+  "units": {
+    "unit1": {
+      "description": "First Gamebrick Mini. Factory backup 2026-10-22; stock update installed 2026-10-23; withdrawn custom image installed 2026-10-25; unrecoverable reset loop since.",
+      "backup": "device-backup-20261022-233350",
+      "original_sha256": "9b7c57387ded72fadd162599cfb2b3797fb27e10759918d4e06f879740577cb3",
+      "stock_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+      "custom_sha256": "e3e67d34f6bc06ed98e6181fe65316457c646152f5d27b6e0467175109fdd9fd"
+    },
+    "unit2": {
+      "description": "Registered from device-backup-20261028-192851; factory application; not yet flashed",
+      "backup": "device-backup-20261028-192851",
+      "original_sha256": "221856d20bf10ff8f9a0c4cbe38ed5efeb98f7de41625a48c916d19c0d7466f5",
+      "stock_sha256": "51b28f4364802db4597baa3a492a2d2b6ce244f3574a6b779542c07ee242f488",
+      "custom_sha256": "e1dc827e4b9f44c16c924e4827b54e230353ec78b9b29cb68408aea601b38e38"
+    }
+  }
+}

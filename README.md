@@ -1,53 +1,74 @@
-# Glassly Mini Gamepad
+# Glassly firmware for the IINE Gamebrick Mini
 
-Firmware research for the IINE Gamebrick Mini Retro Controller L1161/L1162. The target is button notifications over a vendor BLE characteristic that the Glassly App can receive on iOS in the background.
+Custom firmware for the [IINE Gamebrick Mini Retro Controller](https://iine.store/products/iine-gamebrick-mini-retro-controller) (L1161/L1162) that streams its six buttons to the Glassly App over a Bluetooth LE vendor characteristic, so the controller works as a Glassly controller on iOS and Android, including in the background. The stock firmware is a plain HID gamepad, which phone apps cannot read.
 
-**Status:** The custom firmware passed flash readback on 2026-10-25 but failed initial functional checks: the user reports continuous white triple-blinking and unresponsive controls, and BLE scans found no controller. The audit found code outside the CPU execution limits and a branch into the middle of a patched instruction. Installation is blocked. See [failure analysis](docs/boot-failure.md) and [hardware recovery](docs/recovery.md).
+Everything the stock controller does is kept. The patch adds one notification stream (service `AE40`, characteristic `AE42`) next to the official firmware's own features and modes.
 
-- [Current findings](docs/findings.md)
-- [Implementation plan](docs/plan.md)
-- [Tools and sources](docs/resources.md)
-- [Backup metadata](docs/device-backup.json)
-- [REA investigation](docs/rea.md)
+## Flash your Gamebrick
 
-## Local setup
+You need a Mac, the controller's USB-C **data** cable, and about ten minutes. The controller can only be flashed over USB: it has no over-the-air update path a phone could use.
 
-This checkout includes local copies of the firmware, backups and upstream tools under `research/`. They are ignored by Git; a Git clone alone will not contain them. `sources.lock.json` records upstream revisions and `artifact-manifest.json` inventories the preserved research files. Third-party sources retain their licenses.
+1. Install the Xcode Command Line Tools if you have not: `xcode-select --install`.
+2. Get the tool and set it up (downloads two small pinned helper repositories and builds the USB transport):
+
+   ```sh
+   git clone https://github.com/tetramo-labs/glassly-gamebrick-cfw.git
+   cd glassly-gamebrick-cfw
+   ./scripts/setup.sh
+   ```
+
+3. Start the flasher from your own terminal (it needs `sudo` for USB access, and macOS will ask for permission to access removable volumes the first time):
+
+   ```sh
+   sudo .venv/bin/python -u research/flash_gamebrick.py install
+   ```
+
+   It downloads IINE's official update once, verifies it, and then waits for the controller.
+
+4. Put the controller in update mode: with it **powered on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. The flasher takes it from there and ends with `FLASH VERIFIED`.
+5. Unplug, power-cycle, and pair it in the Glassly App under Controllers. Any mode works (T, C or H).
+
+If the controller was never updated by IINE's Windows tool, this installs the current official application and the Glassly patch in one pass. If it already runs the official update, only eight sectors change. Running it again on a flashed controller does nothing.
+
+### What the flasher does and never does
+
+- Reads the entire flash twice, keeps both reads as a backup next to the log (`research/gamebrick-install-*/`), and refuses to continue unless the contents match one of the three known images (factory, official update, Glassly) outside the controller's own storage.
+- Builds the new image from the controller's own flash. Bluetooth pairing data, settings and the key/MAC sector are never written.
+- Writes only the application area, commits the header sector last, and verifies every byte of the flash afterwards.
+- Never erases the whole chip, never touches fuses or chip keys, and never sends a command outside its allowlist.
+
+### Going back to the official firmware
 
 ```sh
-cd ~/dev/glassly-mini-gamepad
-./scripts/setup.sh
-.venv/bin/python scripts/verify-backup.py
+sudo .venv/bin/python -u research/flash_gamebrick.py restore
 ```
 
-The setup script creates an isolated Python environment, builds the native macOS USB transport, and compiles the Q32S SLEIGH description. It does not connect to hardware.
+Same update-mode dance; this puts the official IINE application back. `backup` reads the flash without writing anything.
 
-## REA
+### Buttons in Glassly
 
-REA 6.7.0 is installed locally. Run `./scripts/rea.sh --help`. It successfully inventories the OEM ZIP but does not support this raw Q32S application; see [the recorded results](docs/rea.md).
+| Button | Gesture |
+| --- | --- |
+| D-pad | `swipe_up`, `swipe_down`, `swipe_left`, `swipe_right`, one per press |
+| A | `touch_down` on press, `tap_start` once held 400 ms, `tap_end` on release, `single_tap` after a quick press |
+| B | `double_tap` |
 
-## Take another backup
+### If something goes wrong
 
-Run from an interactive terminal so macOS can present its Removable Volumes permission prompt:
+The flasher stops before writing on anything it does not recognise. If it stops after writing, run it again: a verified write is resumable from any of the known states. A controller that does not come back after a verified flash is the one case we cannot recover from a computer yet; see [recovery](docs/recovery.md). The first prototype did exactly that on 2026-10-25, which is why the current image went through the checks described below before it reached a second unit.
 
-```sh
-sudo .venv/bin/python -u research/backup-controller-native.py
-```
+## How it works
 
-With the controller powered on and USB connected, hold Pairing+B for two seconds until the light goes out. Release both buttons and leave USB connected. The helper waits up to 30 minutes, verifies a RAM loader, reads the entire flash twice, and compares SHA256 hashes. Its command allowlist excludes flash programming, erase and fuse writes.
+- [Findings](docs/findings.md): the hardware (Jieli BD19), the recovered input path, the vendor protocol, and the two units flashed so far.
+- [Custom firmware](docs/custom-firmware.md): the hooks, the AE42 packet, and the build.
+- [Boot failure and fix](docs/boot-failure.md): the two defects of the withdrawn first image and the audit that now rejects them.
+- [Install and restore](docs/custom-install.md): the per-unit research workflow with explicit stock and custom steps.
+- [Plan](docs/plan.md), [resources](docs/resources.md), [Q32S notes](docs/q32s.md).
 
-The older libusb helper is retained for reference; it failed to open the interface on this Mac. Background administrator launches also failed because the removable-storage permission request could not reach the login session.
+The Glassly App side lives in the Glassly repository (`IINE Gamebrick` controller, source 5).
 
-## Offline prototype
+## Developing
 
-```sh
-.venv/bin/python research/build-app-patch.py
-.venv/bin/python research/test-mirror-abi.py
-.venv/bin/python research/patch-flash.py
-```
+`./scripts/setup.sh --research` also fetches the analysis sources and compiles the Q32S SLEIGH description. Building the payload needs Docker and the pinned Jieli toolchain (see [decoder notes](docs/q32s-decoder.md)); `./scripts/check-custom.sh` rebuilds it, repackages the per-unit images, and runs every offline regression, including the boot audit and the one-shot flasher tests. Device dumps, OEM firmware and downloaded dependencies stay local and out of Git; `sources.lock.json` pins the upstream revisions.
 
-These commands operate on the **downloaded OEM update**, not the installed firmware. They produce experimental raw images, not a complete installable UFW. The ABI check is a simulated-call regression check, not hardware validation.
-
-## Q32S analysis
-
-[Verified vendor protocol, RAM/HID path and configuration reads](docs/q32s.md). The stock firmware responds to B4/B5 MessagePack queries; all nine GET groups were read over USB. The GPIO scanner/debounce logic is reconstructed. A 376-byte custom payload now has task/lifecycle hooks, a 16-state queue, device-layout packaging and a guarded installer. The new boot audit rejects this candidate; earlier model checks missed two boot/control-flow defects. See [install/restore commands](docs/custom-install.md). See [custom firmware](docs/custom-firmware.md) and [decoder/toolchain work](docs/q32s-decoder.md).
+Third-party sources retain their licenses.

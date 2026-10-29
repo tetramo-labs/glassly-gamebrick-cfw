@@ -21,6 +21,7 @@ class NOR:
 
 class ImageTests(unittest.TestCase):
  target_sha = TARGET_SHA
+ erased_sectors = 8
  @classmethod
  def setUpClass(cls):
   with contextlib.redirect_stdout(io.StringIO()): cls.stock,cls.target,cls.report=prepare()
@@ -30,7 +31,7 @@ class ImageTests(unittest.TestCase):
   self.assertEqual(digest(self.target),self.target_sha)
   d=NOR(self.stock,self.report['changed_sectors']);r=self.program(d,'install')
   self.assertTrue(r['full_readback_verified']);self.assertEqual(bytes(d.data),self.target)
-  self.assertEqual(d.erased[-1],0x2000);self.assertEqual(len(d.erased),7)
+  self.assertEqual(d.erased[-1],0x2000);self.assertEqual(len(d.erased),self.erased_sectors)
   self.assertEqual(self.program(d,'install')['writes'],0)
   self.program(d,'restore');self.assertEqual(bytes(d.data),self.stock)
  def test_every_page_failure_restores_stock(self):

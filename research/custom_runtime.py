@@ -3,16 +3,10 @@
 The canonical code/layout/identity bytes remain exact-match requirements. Only
 VM, BTIF and USERIF are variable; they are read twice, saved, and never written.
 """
-from custom_image import STOCK_SHA, BASE
-from custom_baseline import CANONICAL_TARGET_SHA, SECTORS
-from flash_stock import SIZE, SECTOR, program_image
+from custom_image import STOCK_SHA, CUSTOM_SHA as CANONICAL_TARGET_SHA, SECTORS, BASE
+from flash_stock import SIZE, SECTOR, STORAGE, program_image
 from stock_update import digest, require, entry
 from jltech.cipher import jl_sfc_cipher
-
-# Absolute reserved-region locations from this exact application's file table.
-STORAGE = (('VM', 0x7a000, 0x2000, 0x12),
-           ('BTIF', 0x7c000, 0x1000, 0x92),
-           ('USERIF', 0x7d000, 0x2000, 0x92))
 
 def validate_templates(stock, custom):
     require(len(stock) == len(custom) == SIZE, 'Incorrect template size')

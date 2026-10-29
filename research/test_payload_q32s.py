@@ -2,6 +2,7 @@
 from pathlib import Path
 import json,unittest
 from q32s_pcode import Machine
+from device_profile import CUSTOM_OUT
 R = Path(__file__).resolve().parent
 META = json.loads((R.parent/'docs/evidence/q32s-payload.json').read_text())
 SYM = {k:int(v,16) for k,v in META['symbols'].items()}
@@ -9,7 +10,7 @@ SYM = {k:int(v,16) for k,v in META['symbols'].items()}
 class PayloadMachine(Machine):
  def __init__(self):
   super().__init__()
-  self.app=(R/'custom-prepared/app.bin').read_bytes()
+  self.app=(CUSTOM_OUT/'app.bin').read_bytes()
   self.ccc=1;self.result=0;self.sent=[];self.handlers=0;self.stub_calls=[]
  def call(self,target,next_pc,gpio_high):
   self.reg('rets',next_pc)

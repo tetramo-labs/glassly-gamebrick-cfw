@@ -1,6 +1,6 @@
 # Firmware and integration plan
 
-Status: active; two patch defects are confirmed and the current installer blocks the failed candidate. See [failure analysis and prevention](boot-failure.md). Hardware recovery remains pending. The custom build failed initial functional checks and the user cannot enter USB update mode. See [recovery plan](recovery.md). Objective: expose all six controller buttons over a vendor BLE notification path usable by the Glassly App on iOS.
+Status: active. The first unit is stuck in a reset loop after the withdrawn custom image; see [failure analysis](boot-failure.md) and [recovery](recovery.md). The replacement candidate fixing both defects is installed on the second unit (unit2) and boots; its AE42 stream delivered all six buttons on a Mac on 2026-10-28. Longer term, the per-unit registration should become a single tool that takes any factory Gamebrick straight to the custom image without the intermediate stock step. Objective: expose all six controller buttons over a vendor BLE notification path usable by the Glassly App on iOS.
 
 ## Completed
 
@@ -35,8 +35,15 @@ The user requested installing the downloaded firmware first. Installation comple
 - [x] Prepare an AE42-only JSONL probe with isolated press/release coverage and reconnect-baseline checks. Current bounded scans found no matching BLE peripheral.
 - [x] Install custom firmware from the user's interactive terminal; seven sectors and full readback verified on 2026-10-25. Physical stock baseline tests were not confirmed before this flash.
 - [x] Reproduce both defects in the captured flashed image, add eight boot regression tests, and reject installation before USB access while retaining stock restore.
-- [ ] Fix and review a replacement image; demonstrate recovery independent of a running application before another custom flash.
-- [ ] Restore stock through `flash_custom.py restore`, confirm boot and normal HID, then investigate the custom startup fault before any further custom installation. Static/P-code/NOR tests do not establish hardware compatibility.
+- [x] Fix both defects (limit raised with placement at `0x01e10a90`; hook moved to `0x01e05270`) and extend the audit to reject either regression. Application-independent recovery is still undemonstrated; the user accepted that risk for unit2.
+- [x] Derive images per unit from each unit's own backup (`research/devices.json`, `add_device.py`); stock installer preserves live runtime storage.
+- [x] unit2: register backup, install stock, confirm buttons/pairing physically (2026-10-28).
+- [x] unit2: install the replacement custom image; boots, USB enumerates, AE42 delivers all six buttons with press/release on a Mac (2026-10-28).
+- [x] One-shot flasher `flash_gamebrick.py` (factory or official firmware straight to Glassly, restore to official), offline tests, setup script that fetches pinned dependencies, README for end users (2026-10-28).
+- [x] Glassly App driver for iOS and Android (`IINE Gamebrick`, source 5): D-pad swipes, A hold-aware tap lifecycle, B double tap; pairing guide links this repository.
+- [ ] unit2: confirm USB HID and C-mode BLE HID under the custom image; explain the early BLE disconnect; test other modes, reconnect, unsubscribe and standby/wake; test the Glassly App driver on a phone, including iOS background.
+- [ ] Package the flasher as a signed macOS app; Windows/Linux transports.
+- [ ] unit1: wired recovery remains pending; `flash_custom.py restore` under `GB_DEVICE=unit1` once update mode is reachable.
 
 See `docs/custom-install.md` for the concrete commands and reviewed hashes. The first two custom install attempts stopped before writes: the first on 38 changed VM bytes and the second on one additional USERIF byte. The firmware is unchanged. `custom_runtime.py` now checks two matching full reads, preserves declared VM/BTIF/USERIF storage and rejects all other unexpected changes. It saves the source, restore image, target and preflight report before writes. Offline tests cover both captures and all 112 page failures; the third attempt completed with full readback SHA256 `bec28bd21195de6d5ef50a0fb163a5dd8d669aeba2aa38e79b8ca37a2cc2073b`. See [installation evidence](evidence/custom-install-result.json).
 

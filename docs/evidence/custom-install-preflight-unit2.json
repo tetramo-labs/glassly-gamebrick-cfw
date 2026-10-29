@@ -1,0 +1,44 @@
+{
+  "mode": "install",
+  "before_sha256": "3606de5b42d221650c6b5185750a5b1a165035bd895d9e73d0914db58c8fb9e4",
+  "stock_sha256": "3606de5b42d221650c6b5185750a5b1a165035bd895d9e73d0914db58c8fb9e4",
+  "custom_sha256": "f735d787f6ebdb0f7b192c1b66b20e19eabc62ddf1b0b781043effa4b66ecefe",
+  "desired_sha256": "f735d787f6ebdb0f7b192c1b66b20e19eabc62ddf1b0b781043effa4b66ecefe",
+  "canonical_stock_sha256": "51b28f4364802db4597baa3a492a2d2b6ce244f3574a6b779542c07ee242f488",
+  "canonical_custom_sha256": "e1dc827e4b9f44c16c924e4827b54e230353ec78b9b29cb68408aea601b38e38",
+  "storage_preserved": [
+    {
+      "name": "VM",
+      "start": "0x7a000",
+      "size": 8192,
+      "sha256": "c289a74ed3bfc2df0b4bf96d00b8af5f5eccb789a5b7988961f628d5340f88ba",
+      "different_bytes_from_template": 38
+    },
+    {
+      "name": "BTIF",
+      "start": "0x7c000",
+      "size": 4096,
+      "sha256": "d9fad49cee6dd20c45b513a151bc0e3c47b8f09a61c7d1418f14dcec46c51057",
+      "different_bytes_from_template": 0
+    },
+    {
+      "name": "USERIF",
+      "start": "0x7d000",
+      "size": 8192,
+      "sha256": "9eff3fe8275889da4266d2a8ac6dae42ff49f986f372dc50c29d2bbb4c5b7cc9",
+      "different_bytes_from_template": 0
+    }
+  ],
+  "changed_sectors": [
+    8192,
+    24576,
+    28672,
+    53248,
+    69632,
+    73728,
+    204800,
+    208896
+  ],
+  "source_state": "stock",
+  "matching_full_reads": 2
+}

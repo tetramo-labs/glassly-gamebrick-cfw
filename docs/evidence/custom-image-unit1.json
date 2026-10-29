@@ -1,0 +1,112 @@
+{
+  "status": "REPLACEMENT CANDIDATE; passes offline boot audit; not flashed; hardware validation pending",
+  "boot_audit": {
+    "emu_con": "0x80000017",
+    "execution_ranges": [
+      [
+        "0x1e00120",
+        "0x1e30b60"
+      ],
+      [
+        "0x40c0",
+        "0x61a8"
+      ],
+      [
+        "0x100000",
+        "0x110000"
+      ]
+    ],
+    "destinations": {
+      "task entry": "0x1e309d0",
+      "0x1e0f194": "0x1e309ec",
+      "0x1e04b86": "0x1e309fc",
+      "0x1e05270": "0x1e309f2",
+      "0x1e05274": "0x1e0520c"
+    },
+    "errors": [],
+    "passes_audit": true,
+    "scope": "Exact stock version: PC limits and their permitted extension, hook destinations, BLE function branch boundaries, appended instructions. Not a complete boot emulator."
+  },
+  "device": "unit1",
+  "stock_sha256": "dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465",
+  "target_sha256": "e3e67d34f6bc06ed98e6181fe65316457c646152f5d27b6e0467175109fdd9fd",
+  "app_sha256": "495ce9131d2cadebd558ec6d5ebfd51b6afa1ba957cba5c7f5dd331fcba9f432",
+  "app_size": 199232,
+  "payload_size": 380,
+  "changed_sectors": [
+    8192,
+    24576,
+    28672,
+    53248,
+    69632,
+    73728,
+    204800,
+    208896
+  ],
+  "patches": [
+    {
+      "address": "0x1e0bcac",
+      "offset": "0xbb8c",
+      "before": "c0ff68eee001",
+      "after": "c0ffd009e301",
+      "purpose": "Create task through state-initializing entry",
+      "decoded": "mov r0, #0x1e309d0"
+    },
+    {
+      "address": "0x1e0bcb6",
+      "offset": "0xbb96",
+      "before": "03fb0008",
+      "after": "03fb4008",
+      "purpose": "Increase task stack request from 0x800 to 0x840; preserve headroom",
+      "decoded": "mov r3, #0x840"
+    },
+    {
+      "address": "0x1e0f194",
+      "offset": "0xf074",
+      "before": "bff33cee",
+      "after": "81f32a0c",
+      "purpose": "gb_task_tick",
+      "decoded": "call 0x1e309ec"
+    },
+    {
+      "address": "0x1e04b86",
+      "offset": "0x4a66",
+      "before": "80f3c57a",
+      "after": "81f3395f",
+      "purpose": "gb_ccc_changed",
+      "decoded": "call 0x1e309fc"
+    },
+    {
+      "address": "0x1e05270",
+      "offset": "0x5150",
+      "before": "51084208",
+      "after": "c1f3bf5b",
+      "purpose": "gb_ble_tail",
+      "decoded": "goto 0x1e309f2"
+    },
+    {
+      "address": "0x1e10a90",
+      "offset": "0x10970",
+      "before": "c0ffc8dfe201",
+      "after": "c0ff600be301",
+      "purpose": "flash_text_limit",
+      "decoded": "mov r0, #0x1e30b60"
+    },
+    {
+      "address": "0x1e00138",
+      "offset": "0x18",
+      "before": "c2fff8230000",
+      "after": "c2fffc230000",
+      "purpose": "Zero reserved epoch word at 0x40b8; stop before RAM code",
+      "decoded": "mov r2, #0x23fc"
+    }
+  ],
+  "state": {
+    "task_stack_extra": 40,
+    "task_stack_request_before": 2048,
+    "task_stack_request_after": 2112,
+    "epoch_address": "0x40b8",
+    "queue_capacity": 16
+  },
+  "preserved": "All bytes outside used active application area; config and P11 content retained, file headers/offsets updated"
+}

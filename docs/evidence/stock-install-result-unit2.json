@@ -1,0 +1,31 @@
+{
+  "writes": 50,
+  "sha256": "51b28f4364802db4597baa3a492a2d2b6ce244f3574a6b779542c07ee242f488",
+  "full_readback_verified": true,
+  "storage_preserved": [
+    {
+      "name": "VM",
+      "start": "0x7a000",
+      "size": 8192,
+      "changed_from_backup": 0
+    },
+    {
+      "name": "BTIF",
+      "start": "0x7c000",
+      "size": 4096,
+      "changed_from_backup": 0
+    },
+    {
+      "name": "USERIF",
+      "start": "0x7d000",
+      "size": 8192,
+      "changed_from_backup": 0
+    }
+  ],
+  "matching_full_reads": 2,
+  "device": "unit2",
+  "mode": "install",
+  "original_sha256": "221856d20bf10ff8f9a0c4cbe38ed5efeb98f7de41625a48c916d19c0d7466f5",
+  "target_sha256": "51b28f4364802db4597baa3a492a2d2b6ce244f3574a6b779542c07ee242f488",
+  "hardware_functional_test": "pending"
+}

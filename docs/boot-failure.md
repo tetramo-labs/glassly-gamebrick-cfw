@@ -1,6 +1,6 @@
 # Custom firmware boot failure
 
-2026-10-25. Two defects are confirmed in the application extracted from the saved flashed target (`bec28bd2…`). The execution-limit violation is the strongest explanation for the reported reset loop. No live exception trace was captured, so the first failing instruction remains unconfirmed. The failed candidate is withdrawn; no replacement image has been produced.
+2026-10-25. Two defects are confirmed in the application extracted from the saved flashed target (`bec28bd2…`). The execution-limit violation is the strongest explanation for the reported reset loop. No live exception trace was captured, so the first failing instruction remains unconfirmed. The failed candidate is withdrawn. A replacement candidate that fixes both defects was built on 2026-10-28; see [the fix](#replacement-candidate-2026-10-28).
 
 ## Execution outside the permitted code range
 
@@ -52,6 +52,16 @@ Eight regression tests cover the captured failed application, stock acceptance, 
 
 The first command passes; the second must exit 1 for the failed candidate. `scripts/check-custom.sh` includes the regression tests and must fail at its final installability check until a replacement has been reviewed. Historical passing model tests do not override this gate.
 
+## Replacement candidate: 2026-10-28
+
+Both defects are fixed at their cause, and the offline audit now rejects either regression. Nothing has been flashed.
+
+**Execution limit.** The payload remains appended after the application image, because the linked text is immediately followed by the initialized RAM data and RAM code images and has no free space. `debug_init` programs the flash text upper limit from the immediate at `0x01e10a90`. The packager now rewrites that one immediate to exactly the new application end (`0x01e30b60` for the current payload), so placement and protection bound change together. Protection stays enabled, the lower limit and the RAM/ROM ranges stay stock, and the startup data-copy source at `0x01e00174`, which uses the same constant, is untouched. The audit executes the actual `debug_init` and reports `FLASH_TEXT_LIMIT_MISMATCH` if the limit differs from the application end by even one byte in either direction, `EXECUTION_LIMITS_CHANGED` if any other range moves, and `STARTUP_DATA_COPY_CHANGED` if the copy source changes.
+
+**BLE epilogue.** The hook moved four bytes earlier, onto the two register moves `r1 = r5; r2 = r4` at `0x01e05270`, which the wrapper now performs itself before calling the event wrapper and popping the original frame. The stock two-byte call at `0x01e05274` and the epilogue at `0x01e05276` are preserved byte for byte, so the unchanged-state branch at `0x01e05256` still lands on an intact return. The P-code regressions execute states 0, 1 and 7 unchanged on both stock and candidate: RAM, stack and epoch are untouched and no event is sent. A changed state sends the event once and advances the epoch once.
+
+Tests: `research/test_boot_audit.py` (12 tests) covers the withdrawn image, the candidate under protected fetch at all hook sites, limit tampering in both directions, and restore of the actual unit1 target. `./scripts/check-custom.sh` runs everything for the current unit and the unit1 history.
+
 ## Before another device receives custom firmware
 
 1. Establish a working stock baseline and demonstrate recovery that does not depend on the application running, using the identified board and boot-ROM procedure.
@@ -60,6 +70,6 @@ The first command passes; the second must exit 1 for the failed candidate. `scri
 4. Review the new image and hashes independently from this failed candidate. Add bounded startup/protection checks and a staged hardware test with reset diagnostics and proven recovery available.
 5. Verify boot, all physical controls, normal HID and recovery before testing AE42 and iOS background delivery.
 
-The new checks prevent these known defects from passing the current installer. They do not establish that a future image is safe. No new firmware was flashed during this audit.
+The new checks prevent these known defects from passing the current installer. They do not establish that the replacement image boots. Step 1's application-independent recovery remains undemonstrated; the user accepted that risk for the second unit after the stock baseline is confirmed.
 
 Machine-readable evidence: [boot-failure.json](evidence/boot-failure.json). Hardware recovery remains pending: [recovery.md](recovery.md).

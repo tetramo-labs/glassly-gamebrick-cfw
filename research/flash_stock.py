@@ -2,12 +2,15 @@
 """Install the OEM application or restore the original backup on this controller."""
 import argparse,ctypes,hashlib,json,os,signal,struct,sys,time
 from pathlib import Path
-from stock_update import ROOT,BACKUP,ORIGINAL_SHA,OUT,require,digest
+from stock_update import ROOT,NAME,BACKUP,ORIGINAL_SHA,STOCK_SHA,OUT,require,digest,prepare
 from jltech.crc import jl_crc16
 SIZE=0x80000
 SECTOR=4096
 PAGE=256
-TARGET_SHA='dfbaeffd4e4cb2c940481cab918b55e29c2eea47107e3214ed12af96b03e8465'
+TARGET_SHA=STOCK_SHA
+# Declared runtime storage from this application's file table (see custom_runtime.py).
+# Never written; its live contents are carried into both the source and target images.
+STORAGE=(('VM',0x7a000,0x2000,0x12),('BTIF',0x7c000,0x1000,0x92),('USERIF',0x7d000,0x2000,0x92))
 LOADER_SHA='faa1b519a3ff1b082f11ccafac8c73d31150161ac972ef9f1934002bcbb8df4f'
 
 class Transport:
@@ -108,13 +111,35 @@ def program_image(device,original,target,mode,before=None,save_before=None):
     return {'writes':count,'sha256':digest(final),'full_readback_verified':True}
 
 
+def with_live_storage(image,current):
+    output=bytearray(image)
+    for _,start,length,_ in STORAGE:output[start:start+length]=current[start:start+length]
+    return bytes(output)
+
+def program_live(device,original,target,mode,save_before):
+    """Read twice, keep live VM/BTIF/USERIF, then require every other byte to match."""
+    require(not device.writes_enabled,'Unexpected enabled writer')
+    for _,start,length,_ in STORAGE:
+        require(original[start:start+length]==target[start:start+length],'Update must not touch runtime storage')
+    print('Reading all flash twice before allowing writes.',flush=True)
+    first=device.read(0,SIZE);require(len(first)==SIZE,'Incomplete first flash read')
+    save_before(first)
+    second=device.read(0,SIZE);require(second==first,'Flash changed between preflight reads; no writes allowed')
+    source=with_live_storage(original,first);desired=with_live_storage(target,first)
+    preserved=[{'name':n,'start':hex(s),'size':l,'changed_from_backup':sum(a!=b for a,b in zip(first[s:s+l],original[s:s+l]))} for n,s,l,_ in STORAGE]
+    print('Preserving live runtime storage:',preserved,flush=True)
+    try:result=program_image(device,source,desired,mode,before=first)
+    finally:device.writes_enabled=False
+    return dict(result,storage_preserved=preserved,matching_full_reads=2)
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('mode',choices=['install','restore']);args=parser.parse_args()
-    original=BACKUP.read_bytes();target=(OUT/'stock-app-device-layout.bin').read_bytes()
+    original,target,_=prepare()
     require(digest(original)==ORIGINAL_SHA and (BACKUP.parent/'flash-pass2.bin').read_bytes()==original,'Original backup failed validation')
     require(digest(target)==TARGET_SHA,'Prepared update hash mismatch; rebuild and review before flashing')
+    print('Device:',NAME,'backup',BACKUP.parent.name,flush=True)
     sectors=[a for a in range(0,SIZE,SECTOR) if original[a:a+SECTOR]!=target[a:a+SECTOR]]
-    result=ROOT/('stock-flash-'+time.strftime('%Y%m%d-%H%M%S'));result.mkdir();owner=ROOT.stat().st_uid
+    result=ROOT/('stock-flash-'+NAME+'-'+time.strftime('%Y%m%d-%H%M%S'));result.mkdir();owner=ROOT.stat().st_uid
     if os.geteuid()==0:os.chown(result,owner,-1)
     log=(result/'operation.log').open('w',buffering=1)
     class Tee:
@@ -138,8 +163,8 @@ def main():
         # Flush the pre-write read to storage before any sector is erased.
         def save_before(data):
             with (result/'before.bin').open('wb') as f:f.write(data);f.flush();os.fsync(f.fileno())
-        report=program_image(transport,original,target,args.mode,save_before=save_before)
-        report.update(mode=args.mode,original_sha256=ORIGINAL_SHA,target_sha256=TARGET_SHA,hardware_functional_test='pending')
+        report=program_live(transport,original,target,args.mode,save_before)
+        report.update(device=NAME,mode=args.mode,original_sha256=ORIGINAL_SHA,target_sha256=TARGET_SHA,hardware_functional_test='pending')
         (result/'result.json').write_text(json.dumps(report,indent=2)+'\n')
         print('FLASH VERIFIED:',report['sha256'],flush=True)
         print('Power-cycle the controller, then test all buttons and pairing.',flush=True)
