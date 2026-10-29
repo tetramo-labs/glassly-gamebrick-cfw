@@ -12,12 +12,12 @@ with USB connected) and the pinned IINE update archive, downloaded automatically
 import argparse, ctypes, json, os, signal, sys, time
 from pathlib import Path
 from flash_stock import Transport, program_image, SIZE, require, digest
-from gamebrick_flasher import ROOT, classify, oem_application, oem_archive, plan
+from gamebrick_flasher import ROOT, classify, custom_application, oem_application, oem_archive, plan
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('mode', choices=['install', 'restore', 'backup'])
-    parser.add_argument('--oem-zip', help='local copy of the official IINE update archive (otherwise downloaded once and cached)')
+    parser.add_argument('--oem-zip', help='rebuild the applications from this official IINE update archive instead of using the committed copies')
     args = parser.parse_args()
     output = ROOT/('gamebrick-'+args.mode+'-'+time.strftime('%Y%m%d-%H%M%S'))
     output.mkdir(); owner = ROOT.stat().st_uid
@@ -29,11 +29,12 @@ def main():
         def flush(self): self.stream.flush(); log.flush()
     sys.stdout = Tee(sys.stdout); sys.stderr = Tee(sys.stderr)
     print('Output:', output, flush=True)
-    oem = None
+    oem = custom = None
     if args.mode != 'backup':
-        # Fetch and verify the official application before touching the controller.
-        oem = oem_application(oem_archive(args.oem_zip))
-        print('Official application verified.', flush=True)
+        # Verify both applications before touching the controller.
+        oem = oem_application(oem_archive(args.oem_zip)) if args.oem_zip else oem_application()
+        custom = custom_application(oem if args.oem_zip else None)
+        print('Official and Glassly applications verified.', flush=True)
     native = ctypes.CDLL(str(ROOT/'native-usb.dylib'))
     native.gb_error.restype = ctypes.c_char_p
     native.gb_transfer.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
@@ -62,7 +63,7 @@ def main():
             # program_live reads twice, keeps the live storage and refuses any other difference.
             planned = {}
             def source_and_target(current):
-                planned.update(plan(current, oem, args.mode))
+                planned.update(plan(current, oem, args.mode, custom))
                 print(f'Controller firmware: {planned["state"]}; {len(planned["changed_sectors"])} sector(s) to write.', flush=True)
                 save('stock.bin', planned['stock']); save('target.bin', planned['target'])
                 return current, planned['target']

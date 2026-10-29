@@ -2,9 +2,9 @@
 
 Everything is derived from the connected unit's own flash. The flash is read twice and kept
 as a backup; its storage-independent fingerprint must match the factory image, the official
-update or the Glassly image. The official application comes from IINE's own update archive
-(downloaded or given locally) and is patched with the reviewed hooks; the result must match
-the pinned application hash. VM/BTIF/USERIF and the key/MAC sector are never written.
+update or the Glassly image. The Glassly and official applications ship in firmware/dist and
+are hash-pinned; the official update archive is only needed to rebuild them. VM/BTIF/USERIF
+and the key/MAC sector are never written.
 """
 import hashlib, io, json, subprocess, sys, tempfile, urllib.request, zipfile
 from pathlib import Path
@@ -28,7 +28,10 @@ OEM_ZIP_URL = 'https://media.iine.top/legacy-assets/6dd5d46599c6e1eeb8bd2623c15d
 OEM_ZIP_SHA = '6dd5d46599c6e1eeb8bd2623c15d14c7a3aee61163f46da0df38953c690dac61'
 OEM_UFW_SHA = '73005e7c885aab2a644adfdf2dbadc01802b34427e9e6febf823f50d4d7745e9'
 CUSTOM_APP_SHA = '495ce9131d2cadebd558ec6d5ebfd51b6afa1ba957cba5c7f5dd331fcba9f432'
-PAYLOAD = ROOT.parent/'firmware/dist/vendor-payload.bin'
+DIST = ROOT.parent/'firmware/dist'
+PAYLOAD = DIST/'vendor-payload.bin'
+GLASSLY_APP = DIST/'glassly-gamebrick-app.bin'
+OFFICIAL_APP = DIST/'iine-official-app.bin'
 MANIFEST = ROOT.parent/'docs/evidence/q32s-payload.json'
 
 
@@ -59,8 +62,13 @@ def oem_archive(path=None, log=print):
     return data
 
 
-def oem_application(archive):
-    """The unmodified official application, extracted with the independent upstream unpacker."""
+def oem_application(archive=None):
+    """The unmodified official application: the committed copy, or extracted from the update
+    archive with the independent upstream unpacker. Hash-pinned either way."""
+    if archive is None:
+        app = OFFICIAL_APP.read_bytes()
+        require(digest(app) == OEM_SHA, 'Committed official application hash mismatch')
+        return app
     with zipfile.ZipFile(io.BytesIO(archive)) as z:
         members = [m for m in z.namelist() if m.lower().endswith('.ufw')]
         require(len(members) == 1, 'Expected one .ufw in the update archive')
@@ -77,8 +85,13 @@ def oem_application(archive):
     return app
 
 
-def custom_application(oem):
-    """The reviewed Glassly application: OEM bytes plus the pinned hooks and payload."""
+def custom_application(oem=None):
+    """The reviewed Glassly application: the committed copy, or the OEM bytes plus the pinned
+    hooks and payload. Hash-pinned either way."""
+    if oem is None:
+        app = GLASSLY_APP.read_bytes()
+        require(digest(app) == CUSTOM_APP_SHA, 'Committed Glassly application hash mismatch')
+        return app
     payload = PAYLOAD.read_bytes()
     manifest = json.loads(MANIFEST.read_text())
     require(digest(payload) == manifest['payload_sha256'], 'Payload differs from the reviewed build')
@@ -87,14 +100,15 @@ def custom_application(oem):
     return patched
 
 
-def plan(current, oem, mode):
-    """Source and target images for `mode` from the live flash, both carrying its storage."""
+def plan(current, oem, mode, custom=None):
+    """Source and target images for `mode` from the live flash, both carrying its storage.
+    `custom` defaults to the committed Glassly application."""
     state = classify(current)
     require(state in ('factory', 'stock', 'custom'), f'Unrecognised flash contents ({state}); refusing to write. Keep the saved backup and ask for help.')
     sha = digest(current)
     stock = build(current, oem, sha)
     if mode == 'install':
-        target = build(current, custom_application(oem), sha)
+        target = build(current, custom or custom_application(), sha)
     elif mode == 'restore':
         target = stock
     else:

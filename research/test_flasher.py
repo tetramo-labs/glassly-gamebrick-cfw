@@ -18,8 +18,10 @@ class FlasherTests(unittest.TestCase):
 
     def test_official_application_and_patch_are_pinned(self):
         self.assertEqual(digest(self.oem), OEM_SHA)
+        self.assertEqual(oem_application(), self.oem, 'the committed official application is the archive\'s')
         patched = custom_application(self.oem)
         self.assertEqual(digest(patched), CUSTOM_APP_SHA)
+        self.assertEqual(custom_application(), patched, 'the committed Glassly application is the patched build')
         self.assertEqual(patched, (ROOT/'custom-prepared/unit2/app.bin').read_bytes(), 'same bytes as the reviewed per-unit build')
         with self.assertRaises(RuntimeError):
             custom_application(b'\0' + self.oem[1:])
@@ -38,7 +40,9 @@ class FlasherTests(unittest.TestCase):
         self.assertEqual(len(FINGERPRINTS), 4)
 
     def test_plans_from_every_state_reach_the_reviewed_images(self):
+        rebuilt = plan(self.factory, self.oem, 'install', custom_application(self.oem))
         from_factory = plan(self.factory, self.oem, 'install')
+        self.assertEqual(rebuilt['target'], from_factory['target'], 'committed and rebuilt applications agree')
         self.assertEqual(from_factory['state'], 'factory')
         self.assertEqual(from_factory['target'], self.custom, 'factory straight to the reviewed unit2 custom image')
         self.assertEqual(from_factory['stock'], self.stock)

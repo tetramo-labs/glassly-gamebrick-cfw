@@ -23,7 +23,7 @@ You need a Mac, the controller's USB-C **data** cable, and about ten minutes. Th
    sudo .venv/bin/python -u research/flash_gamebrick.py install
    ```
 
-   It downloads IINE's official update once, verifies it, and then waits for the controller.
+   The Glassly application and IINE's official one are in `firmware/dist`, hash-checked on every run; nothing is downloaded. It waits for the controller.
 
 4. Put the controller in update mode: with it **powered on and plugged in**, hold **Pairing + B** for about two seconds until the light goes out, then release. The flasher takes it from there and ends with `FLASH VERIFIED`.
 5. Unplug, power-cycle, and pair it in the Glassly App under Controllers. Any mode works (T, C or H).
@@ -33,7 +33,7 @@ If the controller was never updated by IINE's Windows tool, this installs the cu
 ### What the flasher does and never does
 
 - Reads the entire flash twice, keeps both reads as a backup next to the log (`research/gamebrick-install-*/`), and refuses to continue unless the contents match one of the three known images (factory, official update, Glassly) outside the controller's own storage.
-- Builds the new image from the controller's own flash. Bluetooth pairing data, settings and the key/MAC sector are never written.
+- Builds the new image from the controller's own flash and the committed, hash-pinned applications. Bluetooth pairing data, settings and the key/MAC sector are never written.
 - Writes only the application area, commits the header sector last, and verifies every byte of the flash afterwards.
 - Never erases the whole chip, never touches fuses or chip keys, and never sends a command outside its allowlist.
 
